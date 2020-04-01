@@ -78,18 +78,18 @@ float deg_y_averaging = 0.5;                        //Smoothing from last loop's
 float deg_z           = 0.0;                        //The roll of the instrument
 float deg_z_averaging = 0.5;                        //Smoothing from last loop's poll
 
-float accel           = 0.0;		                //Accelerometer data
+float accel           = 0.0;		            //Accelerometer data
 float accel_averaging = 0.5;                        //Smoothing from last loop's poll
-float accel_damping   = 1.5;						//Accelerometer dampening
+float accel_damping   = 1.5;		            //Accelerometer dampening
 
 float imu_deg_init   = 0.0;                         //Placeholder for when we gate our pb buttons, locking in the current instrument angle 
-float imu_up_limit   = -40;							//The up angle for modulation
-float imu_down_limit = -60;							//The down angle for modulation
+float imu_up_limit   = -40;			    //The up angle for modulation
+float imu_down_limit = -60;			    //The down angle for modulation
 
-float imu_roll_deadband = 25;						//How wide our roll dead band is
-float imu_roll_upper_limit = 30;					//Upper roll limit
-float imu_roll_lower_limit = -30;					//Lower roll limit
-boolean imu_roll_active    = false;					//Is imu roll active
+float imu_roll_deadband = 25;			    //How wide our roll dead band is
+float imu_roll_upper_limit = 30;	            //Upper roll limit
+float imu_roll_lower_limit = -30;		    //Lower roll limit
+boolean imu_roll_active    = false;		    //Is imu roll active
 
 float imu_pb_deg_init   = 0.0;						
 float imu_pb_up_limit   = 15;
@@ -97,18 +97,18 @@ float imu_pb_down_limit = -15;
 float imu_pb_deadband   = 6.0;
 bool  imu_pb_active     = false;
 
-Adafruit_MPR121 touchA = Adafruit_MPR121();			//Actual MPR121 object
+Adafruit_MPR121 touchA = Adafruit_MPR121();	     //Actual MPR121 object
 Adafruit_MPR121 touchB = Adafruit_MPR121();			
-Adafruit_BNO055 bno = Adafruit_BNO055(55);			//IMU	
-sensors_event_t event;								//IMU event object
+Adafruit_BNO055 bno = Adafruit_BNO055(55);	      //IMU	
+sensors_event_t event;				      //IMU event object
 
 bool A[] = {false,false,false,false,false,false,false,false,false,false,false,false}; // These are the arrays for finger positions
 bool B[] = {false,false,false,false,false,false,false,false,false,false,false,false};
 
-int CC[128]; 										//CC array
-int pb = 0;											//pb value
+int CC[128]; 					      //CC array
+int pb = 0;					      //pb value
 
-const int ledPin = 13;								//LED for noteOn (onboard Teensy)
+const int ledPin = 13;				      //LED for noteOn (onboard Teensy)
 
 
 void setup() {
