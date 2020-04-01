@@ -1,19 +1,29 @@
 /*
-
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+
+/*
+
+The Open Woodwind Project uses the following components:
+  Teensy 3.2
+  MPR121 (address 0x5A)
+  MPR121 (address 0x5B)
+  MPX2010GS (going into A0, a few filtering caps installed)
+  BNO055
+  
+  It should be compiled in the Teensy Arduino environment with MIDI + SERIAL board options.
+
+*/
 
 #include <Wire.h>
 #include <SPI.h>
@@ -62,43 +72,43 @@ int   cc_delay = SETTINGS_CC_DELAY;                 //Delay in ms between CC mes
 
 bool  legato = SETTINGS_LEGATO;                     //Legato fingering mode
 
-float deg_y           = 0.0;                          //The angle of the instrument
-float deg_y_averaging = 0.5;                          //Smoothing from last loop's poll
+float deg_y           = 0.0;                        //The angle of the instrument
+float deg_y_averaging = 0.5;                        //Smoothing from last loop's poll
 
-float deg_z           = 0.0; //imu_roll
-float deg_z_averaging = 0.5;
+float deg_z           = 0.0;                        //The roll of the instrument
+float deg_z_averaging = 0.5;                        //Smoothing from last loop's poll
 
-float accel           = 0.0;
-float accel_averaging = 0.5;
-float accel_damping   = 1.5;
+float accel           = 0.0;		                //Accelerometer data
+float accel_averaging = 0.5;                        //Smoothing from last loop's poll
+float accel_damping   = 1.5;						//Accelerometer dampening
 
-float imu_deg_init   = 0.0;
-float imu_up_limit   = -40;
-float imu_down_limit = -60;
+float imu_deg_init   = 0.0;                         //Placeholder for when we gate our pb buttons, locking in the current instrument angle 
+float imu_up_limit   = -40;							//The up angle for modulation
+float imu_down_limit = -60;							//The down angle for modulation
 
-float imu_roll_deadband = 25;
-float imu_roll_upper_limit = 30;
-float imu_roll_lower_limit = -30;
-boolean imu_roll_active    = false;
+float imu_roll_deadband = 25;						//How wide our roll dead band is
+float imu_roll_upper_limit = 30;					//Upper roll limit
+float imu_roll_lower_limit = -30;					//Lower roll limit
+boolean imu_roll_active    = false;					//Is imu roll active
 
-float imu_pb_deg_init   = 0.0;
+float imu_pb_deg_init   = 0.0;						
 float imu_pb_up_limit   = 15;
 float imu_pb_down_limit = -15;
 float imu_pb_deadband   = 6.0;
 bool  imu_pb_active     = false;
 
-Adafruit_MPR121 touchA = Adafruit_MPR121();
-Adafruit_MPR121 touchB = Adafruit_MPR121();
-Adafruit_BNO055 bno = Adafruit_BNO055(55);
-sensors_event_t event;
+Adafruit_MPR121 touchA = Adafruit_MPR121();			//Actual MPR121 object
+Adafruit_MPR121 touchB = Adafruit_MPR121();			
+Adafruit_BNO055 bno = Adafruit_BNO055(55);			//IMU	
+sensors_event_t event;								//IMU event object
 
-bool A[] = {false,false,false,false,false,false,false,false,false,false,false,false};
+bool A[] = {false,false,false,false,false,false,false,false,false,false,false,false}; // These are the arrays for finger positions
 bool B[] = {false,false,false,false,false,false,false,false,false,false,false,false};
 
-int CC[128];
-int pb = 0;
+int CC[128]; 										//CC array
+int pb = 0;											//pb value
 
-const int ledPin = 13;
+const int ledPin = 13;								//LED for noteOn (onboard Teensy)
 
 
 void setup() {
@@ -218,6 +228,25 @@ void updateNote() {
 }
 
 int parseNote() {
+	// Mapping as follows: 
+	// A[0] = Left Hand Index
+	// A[1] = Left Hand Middle
+	// A[2] = Left Hand Ring
+	// A[3] = Left Hand Pinky 1 (sharp)
+	// A[4] = Left Hand Pinky 2 (flat)
+	// A[5] = Right Hand Index
+	// A[6] = Right Hand Middle
+	// A[7] = Right Hand Ring
+	// A[8] = Right Hand Pinky 1 (Sharp)
+	// A[9] = Right Hand Pinky 2 (Flat)
+	// A[10]= Right Hand Pinky 3 (Double Flat)
+	// B[0] = Bottom Octave (Left thumb bottom)
+	// B[1] = Middle Octave (Left thumb mid)
+	// B[2] = Top Octave    (Left thumb top)
+	// B[3] = PB gate 
+	// B[4] = PB gate
+	// B[5] = PB Gate
+	//
   for (uint8_t i=0; i<12; i++) {
     A[i] = touchA.filteredData(i) < SETTINGS_TOUCH_LEVEL;
     B[i] = touchB.filteredData(i) < SETTINGS_TOUCH_LEVEL;
@@ -263,20 +292,13 @@ int parseNote() {
   if(A[0] & !A[1] & !A[2] & A[5]) note += 1;
 
   //octaves
-  //if(!B[0] & B[3] & !B[2]) note -= 48; // bottom right
-  //if(B[0] & B[3])          note -= 36; // bottom bridged
-  if(B[0] & !B[1] /*& !B[3]*/) note -= 24; // bottom left
-  if(B[0] & B[1])          note -= 12; // bottom left mid left bridged
-  if(!B[0] & B[1] & !B[2] & !B[4]) note = note; //mid left
- // if(B[1] & B[4])          note += 12; //mid bridged
- // if(!B[1] & B[4] & !B[5] & !B[3]) note += 24; //mid right
- // if(B[4] & B[5])          note += 36; //mid right top right bridged
-  if(B[1] & B[2])          note += 12; //mid left top left bridged
-  if(!B[1] & B[2] /*& !B[5]*/) note += 24; //top left
-  //if(B[2] & B[5])          note += 36; //top bridged
-// if(!B[2] & B[5] & !B[4]) note += 48; //top right
+  if( B[0] &!B[1])                 note -= 24;  // bottom left
+  if( B[0] & B[1])                 note -= 12;  // bottom left mid left bridged
+  if(!B[0] & B[1] & !B[2] & !B[4]) note = note; // mid left
+  if( B[1] & B[2])                 note += 12;  // mid left top left bridged
+  if(!B[1] & B[2])                 note += 24;  // top left
 
-  if(B[3] || B[4] || B[5]) { 
+  if(B[3] || B[4] || B[5]) { //If our pitch bend gates are active
     if(!imu_pb_active) {
       imu_pb_active = true;
       imu_pb_deg_init = deg_y;
@@ -303,7 +325,6 @@ void sendCC() {
     sendCC_breath();
     sendCC_pitchbend();
     sendCC_modulation();
-//    sendCC_portamento();
 }
 
 void sendCC_breath() {
@@ -317,33 +338,46 @@ void sendCC_breath() {
 }
 
 void sendCC_pitchbend() {
-  float aa = accel;
-  float c = 0;
-  if(aa > 10) aa = 10; //Limits our accel values
+  //Pitch bend is pretty messy.... so stay with me here. A lot of mapping, and limits.	
+  //In updateCC() we poll our IMU data.
+	
+  float aa = accel; //aa is now a working copy of the accel value
+  float c = 0;      //c is the value that will be send out (the pb value itself)
+  
+  if(aa > 10) aa = 10; //We limit the raw accel value to +/- 10 for easy mapping, and reasonable limits
   if(aa < -10) aa = -10;
   
-  float a = mapf(aa, -10*accel_damping, 10*accel_damping, -8192, 8192);
+  float a = mapf(aa, -10*accel_damping, 10*accel_damping, -8192, 8192); // map it to pb limits, including our dampening values from settings.
 
-  float u = deg_z;
-  float g = 0;
-  if(u < imu_roll_lower_limit) u = imu_roll_lower_limit;
+  float u = deg_z; //this is again a working copy from the IMU poll, this is the roll value
+  float g = 0;     //g is a placeholder for if we are using a CCW pitchbend up
+  
+  if(u < imu_roll_lower_limit) u = imu_roll_lower_limit; //put the raw deg_z into out limits
   if(u > imu_roll_upper_limit) u = imu_roll_upper_limit;
-  if(u > imu_roll_deadband/2) {
-     //CCW Pitchbend Up
+  
+  if(u > imu_roll_deadband/2) { //If we are outside of our rolldeadband we can send some values
+    
+	//I currently have it sending expression data instead of pitchbend up, when CCW is beyond the deadband.
+	
+	//CCW Pitchbend Up
     // g = (int)mapf(u, imu_roll_deadband/2, imu_roll_upper_limit, 0, 8192);
     
      
      //CCW Expression
      usbSendControlChange(11, mapf(u, imu_roll_deadband/2, imu_roll_upper_limit, 0, 127), 1);
      
-  } else {
+  } else { 
+    //still within the deadband, so ensure we are sending expression value of 0
     //CCW Expression
     usbSendControlChange(11, 0, 1);
   }
+  
+  //if we are outside the deadband, map it to pitchbend up/down. This allows for accel shakes inside the deadband to self center, but longer angle changes do full pitch bends.
   if(u < -(imu_roll_deadband/2)) g = (int)mapf(u, -imu_roll_deadband/2, imu_roll_lower_limit, 0, -8192);
   
+  
+  //If we have our pb gates active
   if(imu_pb_active) {
-      //usbSendControlChange(11, 127, 1);
       float d= deg_y;
       float b = 0;
       
@@ -359,20 +393,14 @@ void sendCC_pitchbend() {
       }
       if((d > (imu_pb_deg_init - imu_pb_deadband / 2)) & (d < (imu_pb_deg_init + imu_pb_deadband / 2))) b = 0;
 
+      c = b - a + g; //cc value = bend angle - accelerometer + roll values
       
-
-      c = b - a + g;
-      
-      //c = a + g;
       if(c >  8192) c = 8192;
       if(c < -8192) c = -8192;
       usbSendPitchBend((int)c, 1);
-
-      
       
     } else {
-     // usbSendControlChange(11, 0, 1);
-      c = g;
+      c = g; //If we're note pb gates active, just use roll values
       if(c >  8192) c = 8192;
       if(c < -8192) c = -8192;
       usbSendPitchBend((int)g, 1);
@@ -385,12 +413,6 @@ void sendCC_modulation() {
     if(d > imu_up_limit)   d = imu_up_limit;
     usbSendControlChange(1, (int)mapf(d, imu_down_limit, imu_up_limit, 0, 127), 1); //deg
 
-    /*
-    float u = deg_z;
-    if(u > imu_roll_lower_limit) u = imu_roll_lower_limit;
-    if(u < imu_roll_upper_limit) u = imu_roll_upper_limit;
-    usbMIDI.sendControlChange(11, (int)mapf(u, imu_roll_lower_limit, imu_roll_upper_limit, 0, 127), 1); //deg
-    */
 }
 
 void updateCC() {
@@ -420,4 +442,3 @@ void usbSendPitchBend(int value, int channel) {
     pb = value;
   }
 }
-
