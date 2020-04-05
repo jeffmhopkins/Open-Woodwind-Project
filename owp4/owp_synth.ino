@@ -38,6 +38,8 @@
  * CC 74 is Oscillator 4 Pulse Width
  * CC 75 is Modulation to Oscillator 1 Pulse Width
  * CC 76 is Filter Resonance (Q)
+ * CC 77 is Note Offset
+ * CC 78 is Fine Tuning (of entire instrument, not individual oscillators)
  * CC 91 is Reverb Size
  * 
  */
@@ -95,6 +97,7 @@ AudioControlSGTL5000     sgtl5000_1;     //xy=1518.0000457763672,61.000005722045
 //Global Variables - Settings (You can change these to set startup conditions)
 int   pitchbend_range           = 2;
 int   note_offset               = 16;
+float default_tune              = 1.0;
 bool  pitchbend_reset_on_noteon = true;
 int   portamento_min            = 100;
 int   portamento_max            = 500;
@@ -106,7 +109,7 @@ float wave1_pulse_width         = 0.97;
 float wave2_pulse_width         = 0.8;
 float wave3_pulse_width         = 0.6;
 float wave4_pulse_width         = 0.5;
-float wave1_starting_gain       = 1.0;
+float wave1_starting_gain       = 0.75;
 float wave2_starting_gain       = 0.0;
 float wave3_starting_gain       = 0.0;
 float wave4_starting_gain       = 0.0;
@@ -188,10 +191,10 @@ void loop() {
   wave2.pulseWidth(bound1(wave2_width.read()+breath.read()*breath_to_pulse_width+modulation.read()*modulation_to_pulse_width));
   wave3.pulseWidth(bound1(wave3_width.read()+breath.read()*breath_to_pulse_width+modulation.read()*modulation_to_pulse_width));
   wave4.pulseWidth(bound1(wave4_width.read()+breath.read()*breath_to_pulse_width+modulation.read()*modulation_to_pulse_width));
-  wave1.frequency(glide_frequency.read() * pitchbend_multiplier * wave1_detune_multiplier * wave_freq);
-  wave2.frequency(glide_frequency.read() * pitchbend_multiplier * wave2_detune_multiplier * wave_freq);
-  wave3.frequency(glide_frequency.read() * pitchbend_multiplier * wave3_detune_multiplier * wave_freq);
-  wave4.frequency(glide_frequency.read() * pitchbend_multiplier * wave4_detune_multiplier * wave_freq);
+  wave1.frequency(glide_frequency.read() * pitchbend_multiplier * wave1_detune_multiplier * wave_freq * default_tune);
+  wave2.frequency(glide_frequency.read() * pitchbend_multiplier * wave2_detune_multiplier * wave_freq * default_tune);
+  wave3.frequency(glide_frequency.read() * pitchbend_multiplier * wave3_detune_multiplier * wave_freq * default_tune);
+  wave4.frequency(glide_frequency.read() * pitchbend_multiplier * wave4_detune_multiplier * wave_freq * default_tune);
   
   filter_frequency.amplitude(breath_to_filter * breath.read() + modulation_to_filter * modulation.read(), filter_frequency_ramp_rate);
   filter.setLowpass(filter_passes, filter_max_frequency * filter_frequency.read() + filter_min_frequency, filter_q);
@@ -333,8 +336,14 @@ void processMIDI(void) {
       if(data1==75) {//Modulation to Pulse Width
         modulation_to_pulse_width = data2/127.0;
       }
-      if(data1==76) {
+      if(data1==76) {//Filter Resonance
         filter_q = data2/127.0*3;
+      }
+      if(data1==77) {//Note Offset
+        note_offset=data2/127.0 * 24;
+      }
+      if(data1==78) {//Fine Tuning
+        default_tune=(data2/127.0/2+0.75);
       }
       
       if(data1==91) {//Reverb Roomsize
