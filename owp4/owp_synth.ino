@@ -115,6 +115,7 @@ float filter_max_frequency      = 10000;
 float filter_min_frequency      = 100;
 float filter_q                  = 0.707;
 float filter_passes             = 0;
+int   breath_gamma              = 1.5; //This makes the breath more logarithmic 
 
 //Global Variables - Ramp Rates (You shouldn't have to change these)
 //These guys smooth out the MIDI values coming in
@@ -234,7 +235,7 @@ void processMIDI(void) {
       }
       if(data1==2) {//Breath
         if(noteon) {
-          breath.amplitude(lin_to_log(data2, 127, 1.5)/127.0, breath_ramp_rate);
+          breath.amplitude(lin_to_log(data2, 127, breath_gamma)/127.0, breath_ramp_rate);
         }
       }
       if(data1==11) {//Expression
