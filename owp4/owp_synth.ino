@@ -37,6 +37,7 @@
  * CC 73 is Oscillator 3 Pulse Width
  * CC 74 is Oscillator 4 Pulse Width
  * CC 75 is Modulation to Oscillator 1 Pulse Width
+ * CC 76 is Filter Resonance (Q)
  * CC 91 is Reverb Size
  * 
  */
@@ -97,11 +98,11 @@ int   note_offset               = 16;
 bool  pitchbend_reset_on_noteon = true;
 int   portamento_min            = 100;
 int   portamento_max            = 500;
-float breath_to_filter          = 0.8;
-float breath_to_pulse_width     = 0.05;
-float modulation_to_filter      = 0.4;
+float breath_to_filter          = 0.4;
+float breath_to_pulse_width     = 0.01;
+float modulation_to_filter      = 0.3;
 float modulation_to_pulse_width = 0.0;
-float wave1_pulse_width         = 0.98;
+float wave1_pulse_width         = 0.97;
 float wave2_pulse_width         = 0.8;
 float wave3_pulse_width         = 0.6;
 float wave4_pulse_width         = 0.5;
@@ -111,8 +112,8 @@ float wave3_starting_gain       = 0.0;
 float wave4_starting_gain       = 0.0;
 float reverb_starting_size      = 0.9;
 float reverb_starting_damping   = 0.999;
-float filter_max_frequency      = 10000;
-float filter_min_frequency      = 100;
+float filter_max_frequency      = 20000;
+float filter_min_frequency      = 10;
 float filter_q                  = 0.707;
 float filter_passes             = 0;
 int   breath_gamma              = 1.5; //This makes the breath more logarithmic 
@@ -331,6 +332,9 @@ void processMIDI(void) {
       }
       if(data1==75) {//Modulation to Pulse Width
         modulation_to_pulse_width = data2/127.0;
+      }
+      if(data1==76) {
+        filter_q = data2/127.0*3;
       }
       
       if(data1==91) {//Reverb Roomsize
