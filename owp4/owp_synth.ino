@@ -11,7 +11,7 @@
  * 
  * Takes MIDI input over USB.
  * 
- * Modulation and Breath effect volume and filter
+ * Modulation and Breath affect volume and filter
  * Expression is mapped to portamento
  * 
  * It defaults to a single oscillator with a variable triangle wave.
