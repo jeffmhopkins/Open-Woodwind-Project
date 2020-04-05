@@ -31,7 +31,7 @@
  * CC 62 is Oscillator 2 Detune
  * CC 63 is Oscillator 3 Detune
  * CC 64 is Oscillator 4 Detune
- * CC 70 is Breath to Oscillator 1 Pulse Width
+ * CC 70 is Breath to Oscillator (all four) Pulse Width
  * CC 71 is Oscillator 1 Pulse Width
  * CC 72 is Oscillator 2 Pulse Width
  * CC 73 is Oscillator 3 Pulse Width
