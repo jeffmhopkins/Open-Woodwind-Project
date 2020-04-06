@@ -36,7 +36,7 @@
  * CC 72 is Oscillator 2 Pulse Width
  * CC 73 is Oscillator 3 Pulse Width
  * CC 74 is Oscillator 4 Pulse Width
- * CC 75 is Modulation to Oscillator 1 Pulse Width
+ * CC 75 is Modulation to Oscillator Pulse Width (all four)
  * CC 76 is Filter Resonance (Q)
  * CC 77 is Note Offset
  * CC 78 is Fine Tuning (of entire instrument, not individual oscillators)
