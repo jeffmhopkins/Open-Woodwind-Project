@@ -273,7 +273,6 @@ void processMIDI(void) {
           wave1.begin(WAVEFORM_SAWTOOTH);
         } else {
           wave1.begin(WAVEFORM_TRIANGLE_VARIABLE);
-          wave1.pulseWidth(0.8);
         }
       }
       if(data1==42) {
@@ -285,7 +284,6 @@ void processMIDI(void) {
           wave2.begin(WAVEFORM_SAWTOOTH);
         } else {
           wave2.begin(WAVEFORM_TRIANGLE_VARIABLE);
-          wave2.pulseWidth(0.8);
         }
       }
       if(data1==43) {
@@ -297,7 +295,6 @@ void processMIDI(void) {
           wave3.begin(WAVEFORM_SAWTOOTH);
         } else {
           wave3.begin(WAVEFORM_TRIANGLE_VARIABLE);
-          wave3.pulseWidth(0.8);
         }
       }
       if(data1==44) {
@@ -309,7 +306,6 @@ void processMIDI(void) {
           wave4.begin(WAVEFORM_SAWTOOTH);
         } else {
           wave4.begin(WAVEFORM_TRIANGLE_VARIABLE);
-          wave4.pulseWidth(0.8);
         }
       }
       
