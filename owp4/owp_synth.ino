@@ -105,21 +105,25 @@ float breath_to_filter          = 0.4;
 float breath_to_pulse_width     = 0.01;
 float modulation_to_filter      = 0.25;
 float modulation_to_pulse_width = 0.0;
-float wave1_pulse_width         = 0.85;
+float wave1_pulse_width         = 0.9;
 float wave2_pulse_width         = 0.8;
 float wave3_pulse_width         = 0.6;
 float wave4_pulse_width         = 0.5;
-float wave1_starting_gain       = 0.75;
+float wave1_starting_gain       = 0.8;
 float wave2_starting_gain       = 0.0;
 float wave3_starting_gain       = 0.0;
-float wave4_starting_gain       = 0.0;
+float wave4_starting_gain       = 65.0/127.0;
+float wave1_detune_multiplier   = 1.0;
+float wave2_detune_multiplier   = 1.0;
+float wave3_detune_multiplier   = 1.0;
+float wave4_detune_multiplier   = 001.0;
 float reverb_starting_size      = 0.9;
 float reverb_starting_damping   = 0.999;
 float filter_max_frequency      = 20000;
 float filter_min_frequency      = 10;
-float filter_q                  = 0.707;
+float filter_q                  = .707;
 float filter_passes             = 0;
-int   breath_gamma              = 1.5; //This makes the breath more logarithmic 
+int   breath_gamma              = 1.85; //This makes the breath more logarithmic 
 
 //Global Variables - Ramp Rates (You shouldn't have to change these)
 //These guys smooth out the MIDI values coming in
@@ -134,32 +138,47 @@ int modulation_ramp_rate        = 30;
 //Global Variables - Not Settings (these are 
 int  note                       = 0;       
 bool noteon                     = false;
-float wave1_detune_multiplier   = 1.0;
-float wave2_detune_multiplier   = 1.0;
-float wave3_detune_multiplier   = 1.0;
-float wave4_detune_multiplier   = 1.0;
 float wave_freq                 = 20000;
 float pitchbend_multiplier      = 1.0;
 
 
 void setup() {
+
+/* Uncomment to load the multioscillator patch 
+modulation_to_pulse_width = 92.0/127.0;
+wave1_pulse_width         = 105.0/127.0;
+wave2_pulse_width         = 108.0/127.0;
+wave3_pulse_width         = 104.0/127.0;
+wave4_pulse_width         = 97.0/127.0;
+wave1_starting_gain       = 61.0/127.0;
+wave2_starting_gain       = 66.0/127.0;
+wave3_starting_gain       = 64.0/127.0;
+wave4_starting_gain       = 65.0/127.0;
+filter_q                  = 2;
+wave1_detune_multiplier   = 127.0/127.0*0.75+0.25;
+wave2_detune_multiplier   = 42.0/127.0*0.75+0.25;
+wave3_detune_multiplier   = 127.0/127.0*0.75+0.25;
+wave4_detune_multiplier   = 0.0;
+*/
+
+  
   Serial.begin(115200);
   sgtl5000_1.enable();
   sgtl5000_1.volume(0.8);
   AudioMemory(20);
   sgtl5000_1.audioPostProcessorEnable();
+  wave1.begin(0.0, 440, WAVEFORM_TRIANGLE_VARIABLE);
+  wave1.pulseWidth(wave1_width.read());
+  wave2.begin(0.0, 440, WAVEFORM_TRIANGLE_VARIABLE);
+  wave2.pulseWidth(wave2_width.read());
+  wave3.begin(0.0, 440, WAVEFORM_TRIANGLE_VARIABLE);
+  wave3.pulseWidth(wave3_width.read());
+  wave4.begin(0.0, 440, WAVEFORM_TRIANGLE_VARIABLE);
+  wave4.pulseWidth(wave4_width.read());
   wave1_width.amplitude(wave1_pulse_width);
   wave2_width.amplitude(wave2_pulse_width);
   wave3_width.amplitude(wave3_pulse_width);
   wave4_width.amplitude(wave4_pulse_width);
-  wave1.begin(1.0, 440, WAVEFORM_TRIANGLE_VARIABLE);
-  wave1.pulseWidth(wave1_width.read());
-  wave2.begin(1.0, 440, WAVEFORM_TRIANGLE_VARIABLE);
-  wave2.pulseWidth(wave2_width.read());
-  wave3.begin(1.0, 440, WAVEFORM_TRIANGLE_VARIABLE);
-  wave3.pulseWidth(wave3_width.read());
-  wave4.begin(1.0, 440, WAVEFORM_TRIANGLE_VARIABLE);
-  wave4.pulseWidth(wave4_width.read());
   waveselect.gain(0, wave1_starting_gain);
   waveselect.gain(1, wave2_starting_gain);
   waveselect.gain(2, wave3_starting_gain);
