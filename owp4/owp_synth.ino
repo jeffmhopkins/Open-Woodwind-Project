@@ -308,7 +308,6 @@ void processMIDI(void) {
           wave4.begin(WAVEFORM_TRIANGLE_VARIABLE);
         }
       }
-      
       if(data1==51) {//Oscillator Gains (51-54)
         waveselect.gain(0, data2/127.0);
       }
@@ -331,7 +330,7 @@ void processMIDI(void) {
         wave3_detune_multiplier = data2/127.0*0.75+0.25;
       }
       if(data1==64) {
-        wave1_detune_multiplier = data2/127.0*0.75+0.25;
+        wave4_detune_multiplier = data2/127.0*0.75+0.25;
       }
       if(data1==70) {//Breath to Pulse Width
         breath_to_pulse_width = data2/127.0;
@@ -360,9 +359,19 @@ void processMIDI(void) {
       if(data1==78) {//Fine Tuning
         default_tune=(data2/127.0/2+0.75);
       }
-      
+      if(data1==79) {//Breath to Filter
+        breath_to_filter = data2/127.0;
+      }
+      if(data1==80) {//Mod to Filter
+        modulation_to_filter = data2/127.0;
+      }
+      if(data1==81) {//vol
+        sgtl5000_1.volume(data2/127.0);
+      }
+      if(data1==82) {//FilterOffset
+        filter_min_frequency = data2/127.0*5000.0;
+      }
       if(data1==91) {//Reverb Roomsize
-      
         reverb.roomsize(data2/127.0);
       }
       break;
