@@ -2,10 +2,14 @@
 # Written by Jeff Hopkins for the Open Woodwind Project Teensy based Synthesizer
 # 
 # This configuration file should be located in /usr/local/share/osc2midi/ and then ran with:
-#    -osc2midi -v -p 3333 -m /usr/local/share/osc2midi/custom.omm
+#    osc2midi -v -p 3333 -m /usr/local/share/osc2midi/custom.omm
 # Where 3333 is the port that you are listening to on the Raspberry Pi (or other linux distro).
 #
 # In order to map this to ALSA based synths, you might have to run a MIDI/ALSA bridge via aj2midid and patching it as a through device.
+#
+# The file 'multioscillator.touchosc' located in this same github directory gets loaded onto the TouchOSC app on the ipad.
+# This can be done by loading TouchOSC Editor (I used windows for this), opening the file (multioscillator.touchosc) and then following
+# the instructions to 'share' to app. Pretty easy.
 #
 
 /1/g1 f, val              : controlchange( 1, 51, val*127);
