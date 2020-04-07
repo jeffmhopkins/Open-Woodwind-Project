@@ -40,6 +40,10 @@
  * CC 76 is Filter Resonance (Q)
  * CC 77 is Note Offset
  * CC 78 is Fine Tuning (of entire instrument, not individual oscillators)
+ * CC 79 is Breath to Filter Cutoff
+ * CC 80 is Modulation to Filter Cutoff
+ * CC 81 is Audio Shield Volume (Master Gain)
+ * CC 82 is Minimum Filter Frequency
  * CC 91 is Reverb Size
  * 
  */
