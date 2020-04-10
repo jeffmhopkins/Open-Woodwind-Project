@@ -1,3 +1,4 @@
+//This is the overdrive waveform, a slightly amplified and clipped wavform to give warm saturation
 float driven_waveform[257] = {
 0.0000000000000,
 0.2269648063655,
