@@ -84,12 +84,6 @@ extern float driven_waveform[257];
 #include <SD.h>
 #include <SerialFlash.h>
 
-#include <Audio.h>
-#include <Wire.h>
-#include <SPI.h>
-#include <SD.h>
-#include <SerialFlash.h>
-
 // GUItool: begin automatically generated code
 AudioSynthWaveformDc     wave3_width;    //xy=100.00003814697266,203.00002002716064
 AudioSynthWaveformDc     wave4_width;    //xy=100.00005340576172,235.00007343292236
