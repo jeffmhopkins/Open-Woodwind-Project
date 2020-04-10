@@ -14,7 +14,7 @@ struct Patch {
   float modulation_to_pulse_width, modulation_to_filter_cutoff, modulation_to_filter_resonance, modulation_to_overdrive;
   float expression_to_pulse_width, expression_to_filter_cutoff, expression_to_filter_resonance, expression_to_portamento, expression_to_overdrive;
   float note_offset, default_tune;
-  float effects_oscillators, effects_flanger, effects_chorus, effects_delay, effects_delay_ms;
+  float effects_oscillators, effects_flange, effects_chorus, effects_delay, effects_delay_ms;
   float portamento_min;
   float wav_gain;
 };
@@ -69,7 +69,7 @@ void loadPatch(int i) {
   note_offset = patch.note_offset;
   default_tune = patch.default_tune;
   effects_oscillators = patch.effects_oscillators;
-  effects_flanger = patch.effects_flanger;
+  effects_flange = patch.effects_flange;
   effects_chorus = patch.effects_chorus;
   effects_delay = patch.effects_delay;
   effects_delay_ms = patch.effects_delay_ms;
@@ -89,7 +89,7 @@ void savePatch(int i) {
                   modulation_to_pulse_width, modulation_to_filter_cutoff, modulation_to_filter_resonance, modulation_to_overdrive,
                   expression_to_pulse_width, expression_to_filter_cutoff, expression_to_filter_resonance, expression_to_portamento, expression_to_overdrive,
                   note_offset, default_tune,
-                  effects_oscillators, effects_flanger, effects_chorus, effects_delay, effects_delay_ms,
+                  effects_oscillators, effects_flange, effects_chorus, effects_delay, effects_delay_ms,
                   portamento_min,
                   wav_gain};
   EEPROM.put(PATCH_EEPROM_ADDRESS_START + sizeof(Patch) * i, patch);
