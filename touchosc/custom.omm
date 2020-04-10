@@ -1,5 +1,7 @@
 # 
 # Written by Jeff Hopkins for the Open Woodwind Project Teensy based Synthesizer
+#
+# This runs on my Raspberry Pi headless synth base station, but it can run on any linux box that you are doing the MIDI routing with.
 # 
 # This configuration file should be located in /usr/local/share/osc2midi/ and then ran with:
 #    osc2midi -v -p 3333 -m /usr/local/share/osc2midi/custom.omm
