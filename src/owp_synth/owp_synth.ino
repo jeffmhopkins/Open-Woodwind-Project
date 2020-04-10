@@ -166,71 +166,67 @@ AudioConnection          patchCord44(left, 0, audio_output, 0);
 AudioControlSGTL5000     sgtl5000_1;     //xy=1632.000057220459,60.00000476837158
 // GUItool: end automatically generated code
 
-
-
-
-
 //Global Variables - Settings (You can change these to set startup conditions)
 int   pitchbend_range                = 2;   
 int   lfo_max_range                  = 2;//octaves 
 int   lfo_max_freq                   = 20;//20hz
 int   note_offset                    = 16;   
-float default_tune                   = 1.0;  //2
-bool  pitchbend_reset_on_noteon      = true; //3
-int   portamento_min                 = 50;   //4
-int   portamento_max                 = 500;  //5
-float breath_to_pulse_width          = 0.4;  //6
-float breath_to_filter_cutoff        = 0.2;  //7
-float breath_to_filter_resonance     = 0.0;  //8
-float breath_to_overdrive            = 0.0;  //9
+float default_tune                   = 1.0;
+bool  pitchbend_reset_on_noteon      = true;
+int   portamento_min                 = 50;   
+int   portamento_max                 = 500;  
+float breath_to_pulse_width          = 0.4;  
+float breath_to_filter_cutoff        = 0.2;  
+float breath_to_filter_resonance     = 0.0;  
+float breath_to_overdrive            = 0.0;  
 float breath_to_lfo1_gain            = 0.0;
 float breath_to_lfo1_freq            = 0.0;
 float breath_to_lfo2_gain            = 0.0;
 float breath_to_lfo2_freq            = 0.0;
-float modulation_to_pulse_width      = 0.0;  //10
-float modulation_to_filter_cutoff    = 0.25; //11
-float modulation_to_filter_resonance = 0.0;  //12
-float modulation_to_overdrive        = 0.0;  //13
+float modulation_to_pulse_width      = 0.0;  
+float modulation_to_filter_cutoff    = 0.25; 
+float modulation_to_filter_resonance = 0.0; 
+float modulation_to_overdrive        = 0.0; 
 float modulation_to_lfo1_gain        = 0.0;
 float modulation_to_lfo1_freq        = 0.0;
 float modulation_to_lfo2_gain        = 0.0;
 float modulation_to_lfo2_freq        = 0.0;
-float expression_to_pulse_width      = 0.0;  //14
-float expression_to_filter_cutoff    = 0.0;  //15
-float expression_to_filter_resonance = 0.0;  //16
-float expression_to_portamento       = 0.75; //17
-float expression_to_overdrive        = 0.0;  //18
+float expression_to_pulse_width      = 0.0; 
+float expression_to_filter_cutoff    = 0.0; 
+float expression_to_filter_resonance = 0.0; 
+float expression_to_portamento       = 0.75; 
+float expression_to_overdrive        = 0.0; 
 float expression_to_lfo1_gain        = 0.0;
 float expression_to_lfo1_freq        = 0.0;
 float expression_to_lfo2_gain        = 0.0;
 float expression_to_lfo2_freq        = 0.0;
-float wave1_pulse_width              = 0.5;  //19
-float wave2_pulse_width              = 0.8;  //20
-float wave3_pulse_width              = 0.6;  //21
-float wave4_pulse_width              = 0.5;  //22
-float wave1_gain                     = 0.8;  //23
-float wave2_gain                     = 0.0;  //24
-float wave3_gain                     = 0.0;  //25
-float wave4_gain                     = 0.0;  //26
+float wave1_pulse_width              = 0.5;  
+float wave2_pulse_width              = 0.8;
+float wave3_pulse_width              = 0.6;
+float wave4_pulse_width              = 0.5;
+float wave1_gain                     = 0.8; 
+float wave2_gain                     = 0.0;
+float wave3_gain                     = 0.0;
+float wave4_gain                     = 0.0;
 float wave1_shape                    = WAVEFORM_TRIANGLE_VARIABLE;
 float wave2_shape                    = WAVEFORM_TRIANGLE_VARIABLE;
 float wave3_shape                    = WAVEFORM_TRIANGLE_VARIABLE;
 float wave4_shape                    = WAVEFORM_TRIANGLE_VARIABLE;
-float noise_pink_gain                = 0.0;  //27
-float noise_white_gain               = 0.0;  //28
-float distortion_gain                = 0.0;  //29
-float wave1_detune_multiplier        = 1.0;  //30
-float wave2_detune_multiplier        = 1.0;  //31
-float wave3_detune_multiplier        = 1.0;  //32
-float wave4_detune_multiplier        = 1.0;  //33
-float reverb_size                    = 0.9;  //34
-float reverb_damping                 = 0.999;//35
-float filter_max_frequency           = 20000;//36
-float filter_min_frequency           = 10;   //37
-float filter_q                       = .707; //38
-float filter_passes                  = 0;    //39
-int   breath_gamma                   = 1.85; //40
-float delay_amount                   = 250;  //41
+float noise_pink_gain                = 0.0; 
+float noise_white_gain               = 0.0; 
+float distortion_gain                = 0.0; 
+float wave1_detune_multiplier        = 1.0; 
+float wave2_detune_multiplier        = 1.0; 
+float wave3_detune_multiplier        = 1.0; 
+float wave4_detune_multiplier        = 1.0; 
+float reverb_size                    = 0.9;
+float reverb_damping                 = 0.999;
+float filter_max_frequency           = 20000;
+float filter_min_frequency           = 10;
+float filter_q                       = .707;
+float filter_passes                  = 0;   
+int   breath_gamma                   = 1.85; 
+float delay_amount                   = 250; 
 float master_volume                  = 0.8;
 float effects_oscillators            = 1.0;
 float effects_flange                 = 0.0;
@@ -247,15 +243,15 @@ float lfo2_range                     = 0.0;
 
 //Global Variables - Ramp Rates (You shouldn't have to change these)
 //These guys smooth out the MIDI values coming in
-int breath_ramp_rate            = 20; //42
-int breath_ramp_rate_note_off   = 50; //43
-int pitch_ramp_rate             = 10; //44
-int filter_frequency_ramp_rate  = 10; //45
-int expression_ramp_rate        = 30; //46
-int pitchbend_ramp_rate         = 10; //47
-int modulation_ramp_rate        = 30; //48
+int breath_ramp_rate            = 20;
+int breath_ramp_rate_note_off   = 50;
+int pitch_ramp_rate             = 10;
+int filter_frequency_ramp_rate  = 10;
+int expression_ramp_rate        = 30; 
+int pitchbend_ramp_rate         = 10;
+int modulation_ramp_rate        = 30;
 
-//Global Variables - Not Settings (these are 
+//Global Variables
 int  note                       = 0;       
 bool noteon                     = false;
 float wave_freq                 = 20000;
@@ -265,18 +261,14 @@ float pulsewidth_calculated     = 0.0;
 float overdrive_calculated      = 0.0;
 float distortion_mix            = 0.0;
 
-//Flange
-// Number of samples in each delay line
+//Flange specific
 #define FLANGE_DELAY_LENGTH (6*AUDIO_BLOCK_SAMPLES)
-// Allocate the delay lines for left and right channels
 short delayline[FLANGE_DELAY_LENGTH];
 int s_idx = FLANGE_DELAY_LENGTH/4;
 int s_depth = FLANGE_DELAY_LENGTH/4;
 double s_freq = .5;
 
-
-//Chorus
-// Number of samples in each delay line
+//Chorus specific
 #define CHORUS_DELAY_LENGTH (16*AUDIO_BLOCK_SAMPLES)
 short chorus_delayline[CHORUS_DELAY_LENGTH];
 int n_chorus = 4;
