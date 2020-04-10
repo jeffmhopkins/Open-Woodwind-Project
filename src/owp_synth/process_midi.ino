@@ -170,19 +170,15 @@ void processMIDI(void) {
           wave4_detune_multiplier = data2/127.0*0.75+0.25;
           break; 
         case CC_WAVE1_PULSE_WIDTH             :
-          wave1_width.amplitude(data2/127.0);
           wave1_pulse_width = (data2/127.0);
           break; 
         case CC_WAVE2_PULSE_WIDTH             : 
-          wave2_width.amplitude(data2/127.0);
           wave2_pulse_width = (data2/127.0);
           break;
         case CC_WAVE3_PULSE_WIDTH             : 
-          wave3_width.amplitude(data2/127.0);
           wave3_pulse_width = (data2/127.0);
           break;
         case CC_WAVE4_PULSE_WIDTH             :
-          wave4_width.amplitude(data2/127.0);
           wave4_pulse_width = (data2/127.0);
           break; 
         case CC_FILTER_RESONANCE_OFFSET       :
@@ -231,6 +227,61 @@ void processMIDI(void) {
           delay1.delay(2, effects_delay_ms*3);
           delay1.delay(3, effects_delay_ms*4);  
           break;     
+        case CC_LFO1_FREQUENCY:
+          lfo1_freq = data2/127.0;
+          break;
+        case CC_LFO1_AMOUNT:
+          lfo1_gain = data2/127.0;
+          break;
+        case CC_LFO1_RANGE:
+          lfo1_range = data2/127.0;
+          break;
+        case CC_BREATH_TO_LFO1_GAIN:
+          breath_to_lfo1_gain = data2/127.0;
+          break;
+        case CC_MODULATION_TO_LFO1_GAIN:
+          modulation_to_lfo1_gain = data2/127.0;
+          break;
+        case CC_EXPRESSION_TO_LFO1_GAIN:
+          expression_to_lfo1_gain = data2/127.0;
+          break;
+        case CC_BREATH_TO_LFO1_FREQ:
+          breath_to_lfo1_freq = data2/127.0;
+          break;
+        case CC_MODULATION_TO_LFO1_FREQ:
+          modulation_to_lfo1_freq = data2/127.0;
+          break;
+        case CC_EXPRESSION_TO_LFO1_FREQ:
+          expression_to_lfo1_freq = data2/127.0;
+          break;
+
+        case CC_LFO2_FREQUENCY:
+          lfo2_freq = data2/127.0;
+          break;
+        case CC_LFO2_AMOUNT:
+          lfo2_gain = data2/127.0;
+          break;
+        case CC_LFO2_RANGE:
+          lfo2_range = data2/127.0;
+          break;
+        case CC_BREATH_TO_LFO2_GAIN:
+          breath_to_lfo2_gain = data2/127.0;
+          break;
+        case CC_MODULATION_TO_LFO2_GAIN:
+          modulation_to_lfo2_gain = data2/127.0;
+          break;
+        case CC_EXPRESSION_TO_LFO2_GAIN:
+          expression_to_lfo2_gain = data2/127.0;
+          break;
+        case CC_BREATH_TO_LFO2_FREQ:
+          breath_to_lfo2_freq = data2/127.0;
+          break;
+        case CC_MODULATION_TO_LFO2_FREQ:
+          modulation_to_lfo2_freq = data2/127.0;
+          break;
+        case CC_EXPRESSION_TO_LFO2_FREQ:
+          expression_to_lfo2_freq = data2/127.0;
+          break;
       }
       break;
 
