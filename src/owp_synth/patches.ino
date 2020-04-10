@@ -17,6 +17,12 @@ struct Patch {
   float effects_oscillators, effects_flange, effects_chorus, effects_delay, effects_delay_ms;
   float portamento_min;
   float wav_gain;
+  float lfo1_gain, lfo1_freq, lfo1_range;
+  float breath_to_lfo1_gain, modulation_to_lfo1_gain, expression_to_lfo1_gain;
+  float breath_to_lfo1_freq, modulation_to_lfo1_freq, expression_to_lfo1_freq;
+  float lfo2_gain, lfo2_freq, lfo2_range;
+  float breath_to_lfo2_gain, modulation_to_lfo2_gain, expression_to_lfo2_gain;
+  float breath_to_lfo2_freq, modulation_to_lfo2_freq, expression_to_lfo2_freq;
 };
 
 void configureSD() {
@@ -34,10 +40,10 @@ void loadPatch(int i) {
   wave2.begin(patch.wave2_shape);
   wave3.begin(patch.wave3_shape);
   wave4.begin(patch.wave4_shape);
-  wave1.pulseWidth(patch.wave1_pulse_width);
-  wave2.pulseWidth(patch.wave2_pulse_width);
-  wave3.pulseWidth(patch.wave3_pulse_width);
-  wave4.pulseWidth(patch.wave4_pulse_width);
+  wave1_pulse_width = patch.wave1_pulse_width;
+  wave2_pulse_width = patch.wave2_pulse_width;
+  wave3_pulse_width = patch.wave3_pulse_width;
+  wave4_pulse_width = patch.wave4_pulse_width;
   wave1_detune_multiplier = patch.wave1_detune_multiplier;
   wave2_detune_multiplier = patch.wave2_detune_multiplier;
   wave3_detune_multiplier = patch.wave3_detune_multiplier;
@@ -75,6 +81,24 @@ void loadPatch(int i) {
   effects_delay_ms = patch.effects_delay_ms;
   portamento_min = patch.portamento_min;
   wav_gain = patch.wav_gain;
+  lfo1_gain = patch.lfo1_gain;
+  lfo1_freq = patch.lfo1_freq;
+  lfo1_range = patch.lfo1_range;
+  breath_to_lfo1_gain = patch.breath_to_lfo1_gain;
+  modulation_to_lfo1_gain = patch.modulation_to_lfo1_gain;
+  expression_to_lfo1_gain = patch.expression_to_lfo1_gain;
+  breath_to_lfo1_freq = patch.breath_to_lfo1_freq;
+  modulation_to_lfo1_freq = patch.modulation_to_lfo1_freq;
+  expression_to_lfo1_freq = patch.expression_to_lfo1_freq;
+  lfo2_gain = patch.lfo2_gain;
+  lfo2_freq = patch.lfo2_freq;
+  lfo2_range = patch.lfo2_range;
+  breath_to_lfo2_gain = patch.breath_to_lfo2_gain;
+  modulation_to_lfo2_gain = patch.modulation_to_lfo2_gain;
+  expression_to_lfo2_gain = patch.expression_to_lfo2_gain;
+  breath_to_lfo2_freq = patch.breath_to_lfo2_freq;
+  modulation_to_lfo2_freq = patch.modulation_to_lfo2_freq;
+  expression_to_lfo2_freq = patch.expression_to_lfo2_freq;
 }
 
 void savePatch(int i) {
@@ -91,6 +115,12 @@ void savePatch(int i) {
                   note_offset, default_tune,
                   effects_oscillators, effects_flange, effects_chorus, effects_delay, effects_delay_ms,
                   portamento_min,
-                  wav_gain};
+                  wav_gain,
+                  lfo1_gain, lfo1_freq, lfo1_range,
+                  breath_to_lfo1_gain, modulation_to_lfo1_gain, expression_to_lfo1_gain,
+                  breath_to_lfo1_freq, modulation_to_lfo1_freq, expression_to_lfo1_freq,
+                  lfo2_gain, lfo2_freq, lfo2_range,
+                  breath_to_lfo2_gain, modulation_to_lfo2_gain, expression_to_lfo2_gain,
+                  breath_to_lfo2_freq, modulation_to_lfo2_freq, expression_to_lfo2_freq};
   EEPROM.put(PATCH_EEPROM_ADDRESS_START + sizeof(Patch) * i, patch);
 }
