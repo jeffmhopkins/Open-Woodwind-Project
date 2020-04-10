@@ -7,34 +7,15 @@
 #
 # In order to map this to ALSA based synths, you might have to run a MIDI/ALSA bridge via aj2midid and patching it as a through device.
 #
-# The file 'multioscillator.touchosc' located in this same github directory gets loaded onto the TouchOSC app on the ipad.
+# The file 'owp_synth.touchosc' located in this same github directory gets loaded onto the TouchOSC app on the ipad.
 # This can be done by loading TouchOSC Editor (I used windows for this), opening the file (multioscillator.touchosc) and then following
 # the instructions to 'share' to app. Pretty easy.
 #
 
-/1/g1 f, val              : controlchange( 1, 51, val*127);
-/1/g2 f, val              : controlchange( 1, 52, val*127);
-/1/g3 f, val              : controlchange( 1, 53, val*127);
-/1/g4 f, val              : controlchange( 1, 54, val*127);
-/1/s1 f, val              : controlchange( 1, 41, val*127);
-/1/s2 f, val              : controlchange( 1, 42, val*127);
-/1/s3 f, val              : controlchange( 1, 43, val*127);
-/1/s4 f, val              : controlchange( 1, 44, val*127);
-/1/d1 f, val              : controlchange( 1, 61, val*127);
-/1/d2 f, val              : controlchange( 1, 62, val*127);
-/1/d3 f, val              : controlchange( 1, 63, val*127);
-/1/d4 f, val              : controlchange( 1, 64, val*127);
-/1/p1 f, val              : controlchange( 1, 71, val*127);
-/1/p2 f, val              : controlchange( 1, 72, val*127);
-/1/p3 f, val              : controlchange( 1, 73, val*127);
-/1/p4 f, val              : controlchange( 1, 74, val*127);
-/1/pwbreath f, val        : controlchange( 1, 70, val*127);
-/1/pwmod f, val           : controlchange( 1, 75, val*127);
-/1/filterq f, val         : controlchange( 1, 76, val*127);
-/1/offset f, val          : controlchange( 1, 77, val*127);
-/1/tune f, val            : controlchange( 1, 78, val*127);
-/1/filterbreath f, val    : controlchange( 1, 79, val*127);
-/1/filtermod f, val       : controlchange( 1, 80, val*127);
-/1/vol f,val              : controlchange( 1, 81, val*127);
-/1/filteroffset f, val    : controlchange( 1, 82, val*127);
-/1/reverb f, val          : controlchange( 1, 91, val*127);
+/1/cc{i} f, k, val : controlchange(0, k, val*127);
+/2/cc{i} f, k, val : controlchange(0, k, val*127);
+/3/cc{i} f, k, val : controlchange(0, k, val*127);
+/4/cc{i} f, k, val : controlchange(0, k, val*127);
+/5/cc{i} f, k, val : controlchange(0, k, val*127);
+/6/cc{i} f, k, val : controlchange(0, k, val*127);
+/127/cc{i} f,k, val : controlchange(0, k, val);
