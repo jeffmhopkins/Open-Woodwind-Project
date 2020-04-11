@@ -198,7 +198,6 @@ void updateOSC() {
   sendcc(CC_EXPRESSION_TO_PORTAMENTO, expression_to_portamento);
   sendcc(CC_EXPRESSION_TO_OVERDRIVE, expression_to_overdrive);
   sendcc(CC_NOTE_OFFSET, note_offset);
-//  sendcc(CC_DEFAULT_TUNE, default_tune);
   sendcc(CC_EFFECTS_MIXER_CLEAN, effects_oscillators);
   sendcc(CC_EFFECTS_MIXER_FLANGE, effects_flange);
   sendcc(CC_EFFECTS_MIXER_CHORUS, effects_chorus);

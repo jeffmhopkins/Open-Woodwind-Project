@@ -270,7 +270,6 @@ void processMIDI(void) {
         case CC_EXPRESSION_TO_LFO1_RANGE:
           expression_to_lfo1_range = data2/127.0;
           break;
-
         case CC_LFO2_FREQUENCY:
           lfo2_freq = data2/127.0;
           break;
