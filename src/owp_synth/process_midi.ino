@@ -33,6 +33,8 @@ void processMIDI(void) {
       }
       note = data1;
       noteon = true;
+      lfo1.phase(0);
+      lfo2.phase(0);
       break;
 
     case usbMIDI.ControlChange: // 0xB0
@@ -338,6 +340,24 @@ void processMIDI(void) {
           break;
         case CC_WAVESHAPE_CLEAN_GAIN:
           waveshape_clean_gain = data2/127.0;
+          break;
+        case CC_LFO1_DESTINATION_FREQUENCY:
+          lfo1_destination_frequency = data2/127.0;
+          break;
+        case CC_LFO1_DESTINATION_GAIN:
+          lfo1_destination_gain = data2/127.0;
+          break;
+        case CC_LFO1_DESTINATION_FILTER:
+          lfo1_destination_filter = data2/127.0;
+          break;
+        case CC_LFO2_DESTINATION_FREQUENCY:
+          lfo2_destination_frequency  = data2/127.0;
+          break;
+        case CC_LFO2_DESTINATION_GAIN:
+          lfo2_destination_gain = data2/127.0;
+          break;
+        case CC_LFO2_DESTINATION_FILTER:
+          lfo2_destination_filter = data2/127.0;
           break;
       }
       break;

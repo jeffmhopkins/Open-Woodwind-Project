@@ -102,6 +102,13 @@
 #define CC_WAVESHAPE_MODULATION_MULTIPLIER        100
 #define CC_WAVESHAPE_MODULATION_MULTIPLIER_OFFSET 101
 #define CC_WAVESHAPE_CLEAN_GAIN                   102
+#define CC_LFO1_DESTINATION_FREQUENCY     103
+#define CC_LFO1_DESTINATION_GAIN          104
+#define CC_LFO1_DESTINATION_FILTER        105
+#define CC_LFO2_DESTINATION_FREQUENCY     106
+#define CC_LFO2_DESTINATION_GAIN          107
+#define CC_LFO2_DESTINATION_FILTER        108
+
 
 extern float driven_waveform1[257];
 extern float driven_waveform2[257];
@@ -114,108 +121,143 @@ extern float driven_waveform3[257];
 #include <SerialFlash.h>
 
 // GUItool: begin automatically generated code
-AudioSynthWaveformDc     wave3_width;    //xy=136,230
-AudioSynthWaveformDc     wave4_width;    //xy=136,262
-AudioSynthWaveformDc     wave2_width;    //xy=137,162
-AudioSynthWaveformDc     wave1_width;    //xy=138,130
-AudioSynthWaveformSine   lfo2;           //xy=152,197
-AudioSynthWaveformSine   lfo1;           //xy=155,98
-AudioSynthWaveformDc     glide_frequency; //xy=302,593
-AudioSynthWaveformDc     filter_frequency; //xy=304,642
-AudioSynthWaveformDc     expression;     //xy=322,514
-AudioSynthWaveformDc     modulation;     //xy=323,433
-AudioSynthWaveformDc     pitchbend;      //xy=325,553
-AudioSynthWaveformDc     breath;         //xy=329,474
-AudioSynthWaveformModulated wave2;          //xy=338,161
-AudioSynthWaveformModulated wave1;          //xy=339,114
-AudioSynthWaveformModulated wave4;          //xy=340,251
-AudioSynthWaveformModulated wave3;          //xy=344,205
-AudioSynthNoisePink      noise_pink;     //xy=493,239
-AudioMixer4              waveselect;     //xy=494,181
-AudioMixer4              dc_smoothing2;  //xy=497,600
-AudioSynthNoiseWhite     noise_white;    //xy=500,281
-AudioMixer4              dc_smoothing1;  //xy=501,487
-AudioMixer4              mixer1;         //xy=664,232
-AudioEffectWaveshaper    waveshape1;     //xy=853,291
-AudioEffectWaveshaper    waveshape2;     //xy=853,322
-AudioEffectWaveshaper    waveshape4;     //xy=854,386
-AudioEffectWaveshaper    waveshape3;     //xy=856,354
-AudioMixer4              waveshape_mixer2; //xy=941.0000305175781,222.00000667572021
-AudioMixer4              waveshape_mixer1; //xy=1038,333
-AudioAmplifier           amp1;           //xy=1277.0038948059082,206.00390911102295
-AudioFilterBiquad        filter;         //xy=1424.0000534057617,180.00000190734863
-AudioEffectDelay         delay1;         //xy=1451,402
-AudioEffectChorus        chorus1;        //xy=1564,320
-AudioEffectFlange        flange1;        //xy=1566,276
-AudioMixer4              delay_mixer1;   //xy=1602,376
-AudioMixer4              effect_mixer;   //xy=1750,270
-AudioPlaySdWav           wavplayer;      //xy=1827,351
-AudioEffectFreeverbStereo reverb;         //xy=1932,216
-AudioMixer4              left;           //xy=2126,292
-AudioMixer4              right;          //xy=2130,365
-AudioOutputI2S           audio_output;   //xy=2274,321
-AudioConnection          patchCord1(wave3_width, 0, wave3, 1);
-AudioConnection          patchCord2(wave4_width, 0, wave4, 1);
-AudioConnection          patchCord3(wave2_width, 0, wave2, 1);
-AudioConnection          patchCord4(wave1_width, 0, wave1, 1);
-AudioConnection          patchCord5(lfo2, 0, wave3, 0);
-AudioConnection          patchCord6(lfo2, 0, wave4, 0);
-AudioConnection          patchCord7(lfo1, 0, wave1, 0);
-AudioConnection          patchCord8(lfo1, 0, wave2, 0);
-AudioConnection          patchCord9(glide_frequency, 0, dc_smoothing2, 1);
-AudioConnection          patchCord10(filter_frequency, 0, dc_smoothing2, 2);
-AudioConnection          patchCord11(expression, 0, dc_smoothing1, 2);
-AudioConnection          patchCord12(modulation, 0, dc_smoothing1, 0);
-AudioConnection          patchCord13(pitchbend, 0, dc_smoothing2, 0);
-AudioConnection          patchCord14(breath, 0, dc_smoothing1, 1);
-AudioConnection          patchCord15(wave2, 0, waveselect, 1);
-AudioConnection          patchCord16(wave1, 0, waveselect, 0);
-AudioConnection          patchCord17(wave4, 0, waveselect, 3);
-AudioConnection          patchCord18(wave3, 0, waveselect, 2);
-AudioConnection          patchCord19(noise_pink, 0, mixer1, 1);
-AudioConnection          patchCord20(waveselect, 0, mixer1, 0);
-AudioConnection          patchCord21(noise_white, 0, mixer1, 2);
-AudioConnection          patchCord22(mixer1, waveshape1);
-AudioConnection          patchCord23(mixer1, waveshape2);
-AudioConnection          patchCord24(mixer1, 0, waveshape_mixer2, 0);
-AudioConnection          patchCord25(mixer1, waveshape3);
-AudioConnection          patchCord26(mixer1, waveshape4);
-AudioConnection          patchCord27(waveshape1, 0, waveshape_mixer1, 0);
-AudioConnection          patchCord28(waveshape2, 0, waveshape_mixer1, 1);
-AudioConnection          patchCord29(waveshape4, 0, waveshape_mixer1, 3);
-AudioConnection          patchCord30(waveshape3, 0, waveshape_mixer1, 2);
-AudioConnection          patchCord31(waveshape_mixer2, amp1);
-AudioConnection          patchCord32(waveshape_mixer1, 0, waveshape_mixer2, 1);
-AudioConnection          patchCord33(amp1, filter);
-AudioConnection          patchCord34(filter, flange1);
-AudioConnection          patchCord35(filter, chorus1);
-AudioConnection          patchCord36(filter, 0, effect_mixer, 0);
-AudioConnection          patchCord37(filter, delay1);
-AudioConnection          patchCord38(delay1, 0, delay_mixer1, 0);
-AudioConnection          patchCord39(delay1, 1, delay_mixer1, 1);
-AudioConnection          patchCord40(delay1, 2, delay_mixer1, 2);
-AudioConnection          patchCord41(delay1, 3, delay_mixer1, 3);
-AudioConnection          patchCord42(chorus1, 0, effect_mixer, 2);
-AudioConnection          patchCord43(flange1, 0, effect_mixer, 1);
-AudioConnection          patchCord44(delay_mixer1, 0, effect_mixer, 3);
-AudioConnection          patchCord45(effect_mixer, reverb);
-AudioConnection          patchCord46(effect_mixer, 0, left, 0);
-AudioConnection          patchCord47(effect_mixer, 0, right, 0);
-AudioConnection          patchCord48(wavplayer, 0, left, 2);
-AudioConnection          patchCord49(wavplayer, 1, right, 2);
-AudioConnection          patchCord50(reverb, 0, left, 1);
-AudioConnection          patchCord51(reverb, 1, right, 1);
-AudioConnection          patchCord52(left, 0, audio_output, 0);
-AudioConnection          patchCord53(right, 0, audio_output, 1);
-AudioControlSGTL5000     sgtl5000_1;     //xy=1020,82
+AudioSynthWaveformSine   lfo2;           //xy=64.00391006469727,448.9999942779541
+AudioSynthWaveformSine   lfo1;           //xy=77.00386810302734,98.00000953674316
+AudioAmplifier           lfo2_destination_frequency_amp; //xy=281.00390625,485.00390625
+AudioAmplifier           lfo1_destination_frequency_amp;           //xy=287.0039291381836,143.00390529632568
+AudioAmplifier           lfo2_destination_gain_amp;  //xy=291.00390625,449.00390625
+AudioAmplifier           lfo1_destination_gain_amp; //xy=295.00390625,105.00390625
+AudioSynthWaveformDc     wave3_gain_dc; //xy=316.00390625,537.0038976669312
+AudioSynthWaveformDc     wave1_gain_dc;            //xy=319.00389862060547,21.9999942779541
+AudioSynthWaveformDc     wave2_gain_dc; //xy=321.00390625,64.00390625
+AudioSynthWaveformDc     wave4_gain_dc; //xy=321.00390625,594.0038967132568
+AudioSynthWaveformDc     wave1_width;    //xy=323.0039176940918,249.99999052286148
+AudioSynthWaveformDc     wave3_width;    //xy=325.0039119720459,356.99999782443047
+AudioSynthWaveformDc     wave4_width;    //xy=325.0039119720459,388.99999782443047
+AudioSynthWaveformDc     wave2_width;    //xy=326.0039119720459,288.99999782443047
+AudioSynthWaveformModulated wave2;          //xy=527.0039119720459,287.99999782443047
+AudioSynthWaveformModulated wave1;          //xy=528.0039119720459,240.99999782443047
+AudioSynthWaveformModulated wave4;          //xy=529.0039119720459,377.99999782443047
+AudioSynthWaveformModulated wave3;          //xy=533.0039119720459,331.99999782443047
+AudioMixer4              lfo1_wave2_multiplier_mixer;         //xy=580.0039024353027,115.00390815734863
+AudioMixer4              lfo1_wave1_multiplier_mixer;         //xy=584.00390625,34.00390625
+AudioMixer4              lfo2_wave3_multiplier_mixer; //xy=591.00390625,455.00390625
+AudioMixer4              lfo2_wave4_multiplier_mixer; //xy=591.0038909912109,540.003927230835
+AudioEffectMultiply      wave2_lfo1_multiply;      //xy=840.0039520263672,278.00390911102295
+AudioEffectMultiply      wave4_lfo2_multiply; //xy=842.00390625,365.00390625
+AudioEffectMultiply      wave1_lfo1_multiply;      //xy=844.0039520263672,241.00393199920654
+AudioEffectMultiply      wave3_lfo2_multiply; //xy=845.00390625,325.00390625
+AudioSynthWaveformDc     glide_frequency; //xy=898.0038948059082,674.0000098347664
+AudioSynthWaveformDc     filter_frequency; //xy=900.0038948059082,723.0000098347664
+AudioSynthWaveformDc     expression;     //xy=918.0038948059082,595.0000098347664
+AudioSynthWaveformDc     modulation;     //xy=919.0038948059082,514.0000098347664
+AudioSynthWaveformDc     pitchbend;      //xy=921.0038948059082,634.0000098347664
+AudioSynthWaveformDc     breath;         //xy=925.0038948059082,555.0000098347664
+AudioMixer4              dc_smoothing2;  //xy=1093.0038948059082,681.0000098347664
+AudioMixer4              dc_smoothing1;  //xy=1097.0038948059082,568.0000098347664
+AudioSynthNoisePink      noise_pink;     //xy=1111.0038585662842,346.0000095665455
+AudioSynthNoiseWhite     noise_white;    //xy=1118.0038585662842,388.0000095665455
+AudioMixer4              waveselect;     //xy=1130.003900527954,278.00002643465996
+AudioMixer4              mixer1;         //xy=1282.0038585662842,339.0000095665455
+AudioEffectWaveshaper    waveshape1;     //xy=1471.0038585662842,398.0000095665455
+AudioEffectWaveshaper    waveshape2;     //xy=1471.0038585662842,429.0000095665455
+AudioEffectWaveshaper    waveshape4;     //xy=1472.0038585662842,493.0000095665455
+AudioEffectWaveshaper    waveshape3;     //xy=1474.0038585662842,461.0000095665455
+AudioMixer4              waveshape_mixer1; //xy=1656.0038585662842,440.0000095665455
+AudioMixer4              waveshape_mixer2; //xy=1852.0039100646973,230.00001847743988
+AudioAmplifier           amp1;           //xy=2028.0039024353027,163.00001275539398
+AudioFilterBiquad        filter;         //xy=2059.003963470459,280.00000989437103
+AudioEffectDelay         delay1;         //xy=2069.003858566284,509.0000095665455
+AudioEffectChorus        chorus1;        //xy=2182.003858566284,427.0000095665455
+AudioEffectFlange        flange1;        //xy=2184.003858566284,383.0000095665455
+AudioMixer4              delay_mixer1;   //xy=2220.003858566284,483.0000095665455
+AudioMixer4              effect_mixer;   //xy=2368.003858566284,377.0000095665455
+AudioPlaySdWav           wavplayer;      //xy=2445.003858566284,458.0000095665455
+AudioEffectFreeverbStereo reverb;         //xy=2550.003858566284,323.0000095665455
+AudioMixer4              left;           //xy=2744.003858566284,399.0000095665455
+AudioMixer4              right;          //xy=2748.003858566284,472.0000095665455
+AudioOutputI2S           audio_output;   //xy=2892.003858566284,428.0000095665455
+AudioConnection          patchCord1(lfo2, lfo2_destination_gain_amp);
+AudioConnection          patchCord2(lfo2, lfo2_destination_frequency_amp);
+AudioConnection          patchCord3(lfo1, lfo1_destination_frequency_amp);
+AudioConnection          patchCord4(lfo1, lfo1_destination_gain_amp);
+AudioConnection          patchCord5(lfo2_destination_frequency_amp, 0, wave3, 0);
+AudioConnection          patchCord6(lfo2_destination_frequency_amp, 0, wave4, 0);
+AudioConnection          patchCord7(lfo1_destination_frequency_amp, 0, wave1, 0);
+AudioConnection          patchCord8(lfo1_destination_frequency_amp, 0, wave2, 0);
+AudioConnection          patchCord9(lfo2_destination_gain_amp, 0, lfo2_wave3_multiplier_mixer, 1);
+AudioConnection          patchCord10(lfo2_destination_gain_amp, 0, lfo2_wave4_multiplier_mixer, 1);
+AudioConnection          patchCord11(lfo1_destination_gain_amp, 0, lfo1_wave1_multiplier_mixer, 1);
+AudioConnection          patchCord12(lfo1_destination_gain_amp, 0, lfo1_wave2_multiplier_mixer, 1);
+AudioConnection          patchCord13(wave3_gain_dc, 0, lfo2_wave3_multiplier_mixer, 0);
+AudioConnection          patchCord14(wave1_gain_dc, 0, lfo1_wave1_multiplier_mixer, 0);
+AudioConnection          patchCord15(wave2_gain_dc, 0, lfo1_wave2_multiplier_mixer, 0);
+AudioConnection          patchCord16(wave4_gain_dc, 0, lfo2_wave4_multiplier_mixer, 0);
+AudioConnection          patchCord17(wave1_width, 0, wave1, 1);
+AudioConnection          patchCord18(wave3_width, 0, wave3, 1);
+AudioConnection          patchCord19(wave4_width, 0, wave4, 1);
+AudioConnection          patchCord20(wave2_width, 0, wave2, 1);
+AudioConnection          patchCord21(wave2, 0, wave2_lfo1_multiply, 1);
+AudioConnection          patchCord22(wave1, 0, wave1_lfo1_multiply, 1);
+AudioConnection          patchCord23(wave4, 0, wave4_lfo2_multiply, 1);
+AudioConnection          patchCord24(wave3, 0, wave3_lfo2_multiply, 1);
+AudioConnection          patchCord25(lfo1_wave2_multiplier_mixer, 0, wave2_lfo1_multiply, 0);
+AudioConnection          patchCord26(lfo1_wave1_multiplier_mixer, 0, wave1_lfo1_multiply, 0);
+AudioConnection          patchCord27(lfo2_wave3_multiplier_mixer, 0, wave3_lfo2_multiply, 0);
+AudioConnection          patchCord28(lfo2_wave4_multiplier_mixer, 0, wave4_lfo2_multiply, 0);
+AudioConnection          patchCord29(wave2_lfo1_multiply, 0, waveselect, 1);
+AudioConnection          patchCord30(wave4_lfo2_multiply, 0, waveselect, 3);
+AudioConnection          patchCord31(wave1_lfo1_multiply, 0, waveselect, 0);
+AudioConnection          patchCord32(wave3_lfo2_multiply, 0, waveselect, 2);
+AudioConnection          patchCord33(glide_frequency, 0, dc_smoothing2, 1);
+AudioConnection          patchCord34(filter_frequency, 0, dc_smoothing2, 2);
+AudioConnection          patchCord35(expression, 0, dc_smoothing1, 2);
+AudioConnection          patchCord36(modulation, 0, dc_smoothing1, 0);
+AudioConnection          patchCord37(pitchbend, 0, dc_smoothing2, 0);
+AudioConnection          patchCord38(breath, 0, dc_smoothing1, 1);
+AudioConnection          patchCord39(noise_pink, 0, mixer1, 1);
+AudioConnection          patchCord40(noise_white, 0, mixer1, 2);
+AudioConnection          patchCord41(waveselect, 0, mixer1, 0);
+AudioConnection          patchCord42(mixer1, waveshape1);
+AudioConnection          patchCord43(mixer1, waveshape2);
+AudioConnection          patchCord44(mixer1, 0, waveshape_mixer2, 0);
+AudioConnection          patchCord45(mixer1, waveshape3);
+AudioConnection          patchCord46(mixer1, waveshape4);
+AudioConnection          patchCord47(waveshape1, 0, waveshape_mixer1, 0);
+AudioConnection          patchCord48(waveshape2, 0, waveshape_mixer1, 1);
+AudioConnection          patchCord49(waveshape4, 0, waveshape_mixer1, 3);
+AudioConnection          patchCord50(waveshape3, 0, waveshape_mixer1, 2);
+AudioConnection          patchCord51(waveshape_mixer1, 0, waveshape_mixer2, 1);
+AudioConnection          patchCord52(waveshape_mixer2, amp1);
+AudioConnection          patchCord53(amp1, filter);
+AudioConnection          patchCord54(filter, flange1);
+AudioConnection          patchCord55(filter, chorus1);
+AudioConnection          patchCord56(filter, 0, effect_mixer, 0);
+AudioConnection          patchCord57(filter, delay1);
+AudioConnection          patchCord58(delay1, 0, delay_mixer1, 0);
+AudioConnection          patchCord59(delay1, 1, delay_mixer1, 1);
+AudioConnection          patchCord60(delay1, 2, delay_mixer1, 2);
+AudioConnection          patchCord61(delay1, 3, delay_mixer1, 3);
+AudioConnection          patchCord62(chorus1, 0, effect_mixer, 2);
+AudioConnection          patchCord63(flange1, 0, effect_mixer, 1);
+AudioConnection          patchCord64(delay_mixer1, 0, effect_mixer, 3);
+AudioConnection          patchCord65(effect_mixer, reverb);
+AudioConnection          patchCord66(effect_mixer, 0, left, 0);
+AudioConnection          patchCord67(effect_mixer, 0, right, 0);
+AudioConnection          patchCord68(wavplayer, 0, left, 2);
+AudioConnection          patchCord69(wavplayer, 1, right, 2);
+AudioConnection          patchCord70(reverb, 0, left, 1);
+AudioConnection          patchCord71(reverb, 1, right, 1);
+AudioConnection          patchCord72(left, 0, audio_output, 0);
+AudioConnection          patchCord73(right, 0, audio_output, 1);
+AudioControlSGTL5000     sgtl5000_1;     //xy=1609.003927230835,119.00000730156898
 // GUItool: end automatically generated code
 
 
 
 
-
-
 //Global Variables - Settings (You can change these to set startup conditions)
+bool  reset_lfo_on_note_on           = true;
 int   pitchbend_range                = 2;   
 int   lfo_max_range                  = 3;//octaves 
 int   lfo_max_freq                   = 60;//20hz
@@ -300,7 +342,13 @@ float lfo2_freq                      = 0.0;
 float lfo2_range                     = 0.0;
 float waveshape_modulation_multiplier        = 0.0;
 float waveshape_modulation_multiplier_offset = 0.0;
-float waveshape_clean_gain                   = 0.0;
+float waveshape_clean_gain           = 0.0;
+float lfo1_destination_gain          = 0.0;
+float lfo1_destination_frequency     = 0.0;
+float lfo1_destination_filter        = 0.0;
+float lfo2_destination_gain          = 0.0; 
+float lfo2_destination_frequency     = 0.0;
+float lfo2_destination_filter        = 0.0;
 
 //Global Variables - Ramp Rates (You shouldn't have to change these)
 //These guys smooth out the MIDI values coming in
@@ -357,9 +405,26 @@ void setup() {
   wave4.begin(0.0, 440, WAVEFORM_TRIANGLE_VARIABLE);
   wave4.frequencyModulation(1);//1 octave range from LFO
   wave1.amplitude(1.0);
-  wave2.amplitude(0.0);
-  wave3.amplitude(0.0);
-  wave4.amplitude(0.0);
+  wave2.amplitude(1.0);
+  wave3.amplitude(1.0);
+  wave4.amplitude(1.0);
+  lfo1_destination_gain_amp.gain(0.0);
+  lfo1_destination_frequency_amp.gain(0.0);
+  lfo2_destination_gain_amp.gain(0.0);
+  lfo2_destination_frequency_amp.gain(0.0);
+  wave1_gain_dc.amplitude(1.0);
+  wave2_gain_dc.amplitude(1.0);
+  wave3_gain_dc.amplitude(1.0);
+  wave4_gain_dc.amplitude(1.0);
+  lfo1_wave1_multiplier_mixer.gain(0,1.0);
+  lfo1_wave1_multiplier_mixer.gain(1,1.0);
+  lfo1_wave2_multiplier_mixer.gain(0,1.0);
+  lfo1_wave2_multiplier_mixer.gain(1,1.0);
+  lfo2_wave3_multiplier_mixer.gain(0,1.0);
+  lfo2_wave3_multiplier_mixer.gain(1,1.0);
+  lfo2_wave4_multiplier_mixer.gain(0,1.0);
+  lfo2_wave4_multiplier_mixer.gain(1,1.0);
+  
   noise_pink.amplitude(0.0);
   noise_white.amplitude(0.0);
   wave1_width.amplitude(wave1_pulse_width);
@@ -413,7 +478,7 @@ void setup() {
   expression.amplitude(0.0);
   pitchbend.amplitude(0.0);
   modulation.amplitude(0.0);
-
+  
   loadPatchSD(1);
   
   AudioInterrupts();
@@ -434,6 +499,12 @@ void loop() {
   wave3.amplitude(wave3_gain);
   wave4.amplitude(wave4_gain);
   amp1.gain(breath.read());
+  lfo1_destination_gain_amp.gain(lfo1_destination_gain);
+  lfo1_destination_frequency_amp.gain(lfo1_destination_frequency);
+  //lfo1_destination_filter
+  lfo2_destination_gain_amp.gain(lfo2_destination_gain);
+  lfo2_destination_frequency_amp.gain(lfo2_destination_frequency);
+  //lfo1_destination_filter
   waveselect.gain(0, wave1_gain);
   waveselect.gain(1, wave2_gain);
   waveselect.gain(2, wave3_gain);

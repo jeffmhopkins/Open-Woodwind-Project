@@ -28,6 +28,8 @@ typedef struct Patch {
   float waveshape1_gain, waveshape2_gain, waveshape3_gain, waveshape4_gain;
   float waveshape_modulation_multiplier, waveshape_modulation_multiplier_offset;
   float waveshape_clean_gain;
+  float lfo1_destination_frequency, lfo1_destination_gain, lfo1_destination_filter;
+  float lfo2_destination_frequency, lfo2_destination_gain, lfo2_destination_filter;
 };
 
 File  dataFile;
@@ -62,7 +64,9 @@ void savePatchSD(int i) {
                   breath_to_lfo2_freq, modulation_to_lfo2_freq, expression_to_lfo2_freq,
                   waveshape1_gain, waveshape2_gain, waveshape3_gain, waveshape4_gain,
                   waveshape_modulation_multiplier, waveshape_modulation_multiplier_offset,
-                  waveshape_clean_gain};
+                  waveshape_clean_gain,
+                  lfo1_destination_frequency, lfo1_destination_gain, lfo1_destination_filter,
+                  lfo2_destination_frequency, lfo2_destination_gain, lfo1_destination_filter};
   if (SD.exists(String(String(i, DEC) +".PAT").c_str())) {
     SD.remove(String(String(i, DEC) +".PAT").c_str());
   }
@@ -159,6 +163,12 @@ void loadPatchSD(int i) {
     waveshape_modulation_multiplier = patch.waveshape_modulation_multiplier;
     waveshape_modulation_multiplier_offset = patch.waveshape_modulation_multiplier_offset;
     waveshape_clean_gain = patch.waveshape_clean_gain;
+    lfo1_destination_frequency = patch.lfo1_destination_frequency;
+    lfo1_destination_gain = patch.lfo1_destination_gain;
+    lfo1_destination_filter = patch.lfo1_destination_filter;
+    lfo2_destination_frequency = patch.lfo2_destination_frequency;
+    lfo2_destination_gain = patch.lfo2_destination_gain;
+    lfo1_destination_filter = patch.lfo1_destination_filter;
 
     updateOSC();
   }
@@ -233,6 +243,12 @@ void updateOSC() {
   sendcc(CC_WAVESHAPE_MODULATION_MULTIPLIER, waveshape_modulation_multiplier);
   sendcc(CC_WAVESHAPE_MODULATION_MULTIPLIER_OFFSET, waveshape_modulation_multiplier_offset);
   sendcc(CC_WAVESHAPE_CLEAN_GAIN, waveshape_clean_gain);
+  sendcc(CC_LFO1_DESTINATION_FREQUENCY, lfo1_destination_frequency);
+  sendcc(CC_LFO1_DESTINATION_GAIN, lfo1_destination_gain);
+  sendcc(CC_LFO1_DESTINATION_FILTER, lfo1_destination_filter);
+  sendcc(CC_LFO2_DESTINATION_FREQUENCY, lfo2_destination_frequency);
+  sendcc(CC_LFO2_DESTINATION_GAIN, lfo2_destination_gain);
+  sendcc(CC_LFO2_DESTINATION_FILTER, lfo2_destination_filter);
 }
 
 void sendcc(int cc, float value) {
