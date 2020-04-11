@@ -112,11 +112,11 @@ void processMIDI(void) {
             wave1.begin(WAVEFORM_SINE);
             wave1_shape = WAVEFORM_SINE;
           } else if(data2 < 64) {
-            wave1.begin(WAVEFORM_SQUARE);
-            wave1_shape = WAVEFORM_SQUARE;
-          } else if(data2 < 96) {
             wave1.begin(WAVEFORM_SAWTOOTH);
             wave1_shape = WAVEFORM_SAWTOOTH;
+          } else if(data2 < 96) {
+            wave1.begin(WAVEFORM_PULSE);
+            wave1_shape = WAVEFORM_PULSE;
           } else {
             wave1.begin(WAVEFORM_TRIANGLE_VARIABLE);
             wave1_shape = WAVEFORM_TRIANGLE_VARIABLE;
@@ -125,34 +125,46 @@ void processMIDI(void) {
         case CC_WAVE2_SHAPE: 
             if(data2 < 32) {
             wave2.begin(WAVEFORM_SINE);
+            wave2_shape = WAVEFORM_SINE;
           } else if(data2 < 64) {
-            wave2.begin(WAVEFORM_SQUARE);
-          } else if(data2 < 96) {
             wave2.begin(WAVEFORM_SAWTOOTH);
+            wave2_shape = WAVEFORM_SAWTOOTH;
+          } else if(data2 < 96) {
+            wave2.begin(WAVEFORM_PULSE);
+            wave2_shape = WAVEFORM_PULSE;
           } else {
             wave2.begin(WAVEFORM_TRIANGLE_VARIABLE);
+            wave2_shape = WAVEFORM_TRIANGLE_VARIABLE;
           }
           break;
         case CC_WAVE3_SHAPE: 
            if(data2 < 32) {
             wave3.begin(WAVEFORM_SINE);
+            wave3_shape = WAVEFORM_SINE;
           } else if(data2 < 64) {
-            wave3.begin(WAVEFORM_SQUARE);
-          } else if(data2 < 96) {
             wave3.begin(WAVEFORM_SAWTOOTH);
+            wave3_shape = WAVEFORM_SAWTOOTH;
+          } else if(data2 < 96) {
+            wave3.begin(WAVEFORM_PULSE);
+            wave3_shape = WAVEFORM_PULSE;
           } else {
             wave3.begin(WAVEFORM_TRIANGLE_VARIABLE);
+            wave3_shape = WAVEFORM_TRIANGLE_VARIABLE;
           }
           break;
         case CC_WAVE4_SHAPE: 
           if(data2 < 32) {
             wave4.begin(WAVEFORM_SINE);
+            wave4_shape = WAVEFORM_SINE;
           } else if(data2 < 64) {
-            wave4.begin(WAVEFORM_SQUARE);
-          } else if(data2 < 96) {
             wave4.begin(WAVEFORM_SAWTOOTH);
+            wave4_shape = WAVEFORM_SAWTOOTH;
+          } else if(data2 < 96) {
+            wave4.begin(WAVEFORM_PULSE);
+            wave4_shape = WAVEFORM_PULSE;
           } else {
             wave4.begin(WAVEFORM_TRIANGLE_VARIABLE);
+            wave4_shape = WAVEFORM_TRIANGLE_VARIABLE;
           }
           break;
         case CC_WAVE1_GAIN: 
@@ -323,6 +335,9 @@ void processMIDI(void) {
           break;
         case CC_WAVESHAPE_MODULATION_MULTIPLIER_OFFSET:
           waveshape_modulation_multiplier_offset = data2/127.0;
+          break;
+        case CC_WAVESHAPE_CLEAN_GAIN:
+          waveshape_clean_gain = data2/127.0;
           break;
       }
       break;

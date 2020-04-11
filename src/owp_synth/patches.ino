@@ -27,6 +27,7 @@ typedef struct Patch {
   float breath_to_lfo2_freq, modulation_to_lfo2_freq, expression_to_lfo2_freq;
   float waveshape1_gain, waveshape2_gain, waveshape3_gain, waveshape4_gain;
   float waveshape_modulation_multiplier, waveshape_modulation_multiplier_offset;
+  float waveshape_clean_gain;
 };
 
 File  dataFile;
@@ -60,7 +61,8 @@ void savePatchSD(int i) {
                   breath_to_lfo2_gain, modulation_to_lfo2_gain, expression_to_lfo2_gain,
                   breath_to_lfo2_freq, modulation_to_lfo2_freq, expression_to_lfo2_freq,
                   waveshape1_gain, waveshape2_gain, waveshape3_gain, waveshape4_gain,
-                  waveshape_modulation_multiplier, waveshape_modulation_multiplier_offset};
+                  waveshape_modulation_multiplier, waveshape_modulation_multiplier_offset,
+                  waveshape_clean_gain};
   if (SD.exists(String(String(i, DEC) +".PAT").c_str())) {
     SD.remove(String(String(i, DEC) +".PAT").c_str());
   }
@@ -156,6 +158,7 @@ void loadPatchSD(int i) {
     waveshape4_gain = patch.waveshape4_gain;
     waveshape_modulation_multiplier = patch.waveshape_modulation_multiplier;
     waveshape_modulation_multiplier_offset = patch.waveshape_modulation_multiplier_offset;
+    waveshape_clean_gain = patch.waveshape_clean_gain;
 
     updateOSC();
   }
@@ -229,6 +232,7 @@ void updateOSC() {
   sendcc(CC_WAVESHAPE4_GAIN, waveshape4_gain);
   sendcc(CC_WAVESHAPE_MODULATION_MULTIPLIER, waveshape_modulation_multiplier);
   sendcc(CC_WAVESHAPE_MODULATION_MULTIPLIER_OFFSET, waveshape_modulation_multiplier_offset);
+  sendcc(CC_WAVESHAPE_CLEAN_GAIN, waveshape_clean_gain);
 }
 
 void sendcc(int cc, float value) {
