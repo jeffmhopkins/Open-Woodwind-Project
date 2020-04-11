@@ -10,10 +10,10 @@
  * There are a LOT of CC channels. These are meant to be controlled via an OSC interface on an iPad.
  * 
  * I created a TouchOSC interface that controls this synth.
- * See https://github.com/jeffmhopkins/Open-Woodwind-Project/tree/master/touchosc
+ * See https://github.com/jeffmhopkins/Open-Woodwind-Project/tree/master/src/osc_configuration_for_linux_touchosc
  * 
- * I run an osc2midi bridge on a linux box for the mapping.The osc2midi config file is located here:
- * https://github.com/jeffmhopkins/Open-Woodwind-Project/blob/master/touchosc/custom.omm
+ * I run an osc2midi and midi2osc bridge on a linux box for the mapping. 
+ * https://github.com/jeffmhopkins/Open-Woodwind-Project/tree/master/src/osc_configuration_for_linux_touchosc
  * 
  * You can easily create custom OSC interfaces for your setup with ease, just look at the CC mapping below.
  * 
