@@ -2,7 +2,7 @@
 
 The Open Woodwind Project is aimed at making an open source MIDI Woodwind Controller with onboard synthesizer.
 
-It utilizes a Teensy microcontroller with Audio Breakoout, two MPR121s,BNO055 IMU, and MPXV4006GP pressure Transducer. 
+It utilizes a Teensy microcontroller with Audio Breakout, two MPR121s,BNO055 IMU, and MPXV4006GP pressure Transducer. 
 
 OWP_Synth is a sub project utilizing a Teensy Audio Libray based multi oscillator with LFOs, waveshaping, effects, and a complex modulation scheme, controlled over an OSC iPad interface. It will eventually be fully integrated into the onboard synth for the controller.  
 
