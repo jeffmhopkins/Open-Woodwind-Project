@@ -10,7 +10,7 @@ typedef struct Patch {
   float wave1_detune_multiplier, wave2_detune_multiplier, wave3_detune_multiplier, wave4_detune_multiplier;
   float wave1_gain,  wave2_gain,  wave3_gain,  wave4_gain;
   float master_volume, reverb_size;
-  float distortion_mix, noise_pink_gain, noise_white_gain;
+  float noise_pink_gain, noise_white_gain;
   float filter_min_frequency, filter_q;
   float breath_to_pulse_width, breath_to_filter_cutoff, breath_to_filter_resonance, breath_to_overdrive;
   float modulation_to_pulse_width, modulation_to_filter_cutoff, modulation_to_filter_resonance, modulation_to_overdrive;
@@ -44,7 +44,7 @@ void savePatchSD(int i) {
                   wave1_detune_multiplier,wave2_detune_multiplier,wave3_detune_multiplier,wave4_detune_multiplier,
                   wave1_gain,  wave2_gain,  wave3_gain,  wave4_gain,
                   master_volume, reverb_size,
-                  distortion_mix, noise_pink_gain, noise_white_gain,
+                  noise_pink_gain, noise_white_gain,
                   filter_min_frequency, filter_q,
                   breath_to_pulse_width, breath_to_filter_cutoff, breath_to_filter_resonance, breath_to_overdrive,
                   modulation_to_pulse_width, modulation_to_filter_cutoff, modulation_to_filter_resonance, modulation_to_overdrive,
@@ -88,7 +88,7 @@ void loadPatchSD(int i) {
     int bytes = dataFile.read(&patch, sizeof(Patch));
     Serial.print("Loaded:");Serial.println(bytes, DEC);
     dataFile.close();
-    wave1.begin(patch.wave1_shape);
+    wave1.begin(patch.wave1_shape); 
     wave2.begin(patch.wave2_shape);
     wave3.begin(patch.wave3_shape);
     wave4.begin(patch.wave4_shape);
@@ -106,7 +106,6 @@ void loadPatchSD(int i) {
     waveselect.gain(3, patch.wave4_gain); wave4_gain = patch.wave4_gain;
     master_volume = patch.master_volume;
     reverb_size   = patch.reverb_size;
-    distortion_mix = patch.distortion_mix;
     noise_pink_gain = patch.noise_pink_gain;
     noise_white_gain = patch.noise_white_gain;
     filter_min_frequency = patch.filter_min_frequency;
@@ -157,5 +156,82 @@ void loadPatchSD(int i) {
     waveshape4_gain = patch.waveshape4_gain;
     waveshape_modulation_multiplier = patch.waveshape_modulation_multiplier;
     waveshape_modulation_multiplier_offset = patch.waveshape_modulation_multiplier_offset;
+
+    updateOSC();
   }
+}
+
+void updateOSC() {
+  sendcc(CC_WAVE1_SHAPE, wave1_shape);
+  sendcc(CC_WAVE2_SHAPE, wave2_shape);
+  sendcc(CC_WAVE3_SHAPE, wave3_shape);
+  sendcc(CC_WAVE4_SHAPE, wave4_shape);
+  sendcc(CC_WAVE1_PULSE_WIDTH, wave1_pulse_width);
+  sendcc(CC_WAVE2_PULSE_WIDTH, wave2_pulse_width);
+  sendcc(CC_WAVE3_PULSE_WIDTH, wave3_pulse_width);
+  sendcc(CC_WAVE4_PULSE_WIDTH, wave4_pulse_width);
+  sendcc(CC_WAVE1_DETUNE_MULTIPLIER, wave1_detune_multiplier);
+  sendcc(CC_WAVE2_DETUNE_MULTIPLIER, wave2_detune_multiplier);
+  sendcc(CC_WAVE3_DETUNE_MULTIPLIER, wave3_detune_multiplier);
+  sendcc(CC_WAVE4_DETUNE_MULTIPLIER, wave4_detune_multiplier);
+  sendcc(CC_WAVE1_GAIN, wave1_gain);
+  sendcc(CC_WAVE2_GAIN, wave2_gain);
+  sendcc(CC_WAVE3_GAIN, wave3_gain);
+  sendcc(CC_WAVE4_GAIN, wave4_gain);
+  sendcc(CC_MASTER_VOLUME, master_volume);
+  sendcc(CC_REVERB_ROOM_SIZE, reverb_size);
+  sendcc(CC_NOISE_PINK_GAIN, noise_pink_gain);
+  sendcc(CC_NOISE_WHITE_GAIN, noise_white_gain);
+  sendcc(CC_FILTER_FREQUENCY_OFFSET, filter_min_frequency);
+  sendcc(CC_FILTER_RESONANCE_OFFSET, filter_q);
+  sendcc(CC_BREATH_TO_PULSE_WIDTH, breath_to_pulse_width);
+  sendcc(CC_BREATH_TO_FILTER_CUTOFF, breath_to_filter_cutoff);
+  sendcc(CC_BREATH_TO_FILTER_RESONANCE, breath_to_filter_resonance);
+  sendcc(CC_BREATH_TO_OVERDRIVE, breath_to_overdrive);
+  sendcc(CC_MODULATION_TO_PULSE_WIDTH, modulation_to_pulse_width);
+  sendcc(CC_MODULATION_TO_FILTER_CUTOFF, modulation_to_filter_cutoff);
+  sendcc(CC_MODULATION_TO_FILTER_RESONANCE, modulation_to_filter_resonance);
+  sendcc(CC_MODULATION_TO_OVERDRIVE, modulation_to_overdrive);
+  sendcc(CC_EXPRESSION_TO_PULSE_WIDTH, expression_to_pulse_width);
+  sendcc(CC_EXPRESSION_TO_FILTER_CUTOFF, expression_to_filter_cutoff);
+  sendcc(CC_EXPRESSION_TO_FILTER_RESONANCE, expression_to_filter_resonance);
+  sendcc(CC_EXPRESSION_TO_PORTAMENTO, expression_to_portamento);
+  sendcc(CC_EXPRESSION_TO_OVERDRIVE, expression_to_overdrive);
+  sendcc(CC_NOTE_OFFSET, note_offset);
+//  sendcc(CC_DEFAULT_TUNE, default_tune);
+  sendcc(CC_EFFECTS_MIXER_CLEAN, effects_oscillators);
+  sendcc(CC_EFFECTS_MIXER_FLANGE, effects_flange);
+  sendcc(CC_EFFECTS_MIXER_CHORUS, effects_chorus);
+  sendcc(CC_EFFECTS_MIXER_DELAY, effects_delay);
+  sendcc(CC_EFFECTS_MIXER_DELAY_MS, effects_delay_ms);
+  sendcc(CC_PORTAMENTO_MIN, portamento_min);
+  sendcc(CC_WAV_PLAYER_GAIN, wav_gain);
+  sendcc(CC_LFO1_AMOUNT, lfo1_gain);
+  sendcc(CC_LFO1_FREQUENCY, lfo1_freq);
+  sendcc(CC_LFO1_RANGE, lfo1_range);
+  sendcc(CC_BREATH_TO_LFO1_GAIN, breath_to_lfo1_gain);
+  sendcc(CC_MODULATION_TO_LFO1_GAIN, modulation_to_lfo1_gain);
+  sendcc(CC_EXPRESSION_TO_LFO1_GAIN, expression_to_lfo1_gain);
+  sendcc(CC_BREATH_TO_LFO1_FREQ, breath_to_lfo1_freq);
+  sendcc(CC_MODULATION_TO_LFO1_FREQ, modulation_to_lfo1_freq);
+  sendcc(CC_EXPRESSION_TO_LFO1_FREQ, expression_to_lfo1_freq);
+  sendcc(CC_LFO2_AMOUNT, lfo2_gain);
+  sendcc(CC_LFO2_FREQUENCY, lfo2_freq);
+  sendcc(CC_LFO2_RANGE, lfo2_range);
+  sendcc(CC_BREATH_TO_LFO2_GAIN, breath_to_lfo2_gain);
+  sendcc(CC_MODULATION_TO_LFO2_GAIN, modulation_to_lfo2_gain);
+  sendcc(CC_EXPRESSION_TO_LFO2_GAIN, expression_to_lfo2_gain);
+  sendcc(CC_BREATH_TO_LFO2_FREQ, breath_to_lfo2_freq);
+  sendcc(CC_MODULATION_TO_LFO2_FREQ, modulation_to_lfo2_freq);
+  sendcc(CC_EXPRESSION_TO_LFO2_FREQ, expression_to_lfo2_freq);
+  sendcc(CC_WAVESHAPE1_GAIN, waveshape1_gain);
+  sendcc(CC_WAVESHAPE2_GAIN, waveshape2_gain);
+  sendcc(CC_WAVESHAPE3_GAIN, waveshape3_gain);
+  sendcc(CC_WAVESHAPE4_GAIN, waveshape4_gain);
+  sendcc(CC_WAVESHAPE_MODULATION_MULTIPLIER, waveshape_modulation_multiplier);
+  sendcc(CC_WAVESHAPE_MODULATION_MULTIPLIER_OFFSET, waveshape_modulation_multiplier_offset);
+}
+
+void sendcc(int cc, float value) {
+  usbMIDI.sendControlChange(cc, (int)(value*127.0), 0);
 }
