@@ -1,3 +1,10 @@
+/*
+ * The Open Woodwind Project - OWP_Synth for Woodwind Controllers by Jeff Hopkins
+ * 
+ * Just naming the USB iteration.
+ * 
+ */
+
 #include "usb_names.h"
 
 #define MIDI_NAME   {'O', 'W', 'P',' ','S','y','n','t','h'}
