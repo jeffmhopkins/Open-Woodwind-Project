@@ -1,10 +1,13 @@
 # 
 # Written by Jeff Hopkins for the Open Woodwind Project Teensy based Synthesizer
 #
+# This is a configuration file for osc2midi, https://github.com/ssj71/OSC2MIDI 
+# (see https://github.com/ssj71/OSC2MIDI/blob/master/syntax.md for how to write this file)
+# 
 # This runs on my Raspberry Pi headless synth base station, but it can run on any linux box that you are doing the MIDI routing with.
 # 
 # This configuration file should be located in /usr/local/share/osc2midi/ and then ran with:
-#    osc2midi -v -p 3333 -m /usr/local/share/osc2midi/custom.omm
+#    osc2midi -v -p 3333 -m /usr/local/share/osc2midi/osc2midi.omm
 # Where 3333 is the port that you are listening to on the Raspberry Pi (or other linux distro).
 #
 # In order to map this to ALSA based synths, you might have to run a MIDI/ALSA bridge via aj2midid and patching it as a through device.
