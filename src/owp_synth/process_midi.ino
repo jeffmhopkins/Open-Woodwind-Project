@@ -1,3 +1,13 @@
+/*
+ * The Open Woodwind Project - OWP_Synth for Woodwind Controllers by Jeff Hopkins
+ * 
+ * This is where all the CC updates happen. Most of the time we just set a variable and the main audio loop
+ * handles updating the specific audio objects.
+ * 
+ * The exception is that we set our modulation, breath, and expression to DC smoothers with ramp rates.
+ * 
+ */
+
 void processMIDI(void) {
   byte type, data1, data2;
   type = usbMIDI.getType();       // which MIDI message, 128-255
@@ -39,46 +49,46 @@ void processMIDI(void) {
         case CC_BREATH_TO_PULSE_WIDTH:
           breath_to_pulse_width = data2/127.0;
           break;
-        case CC_BREATH_TO_FILTER_CUTOFF       :
+        case CC_BREATH_TO_FILTER_CUTOFF:
           breath_to_filter_cutoff = data2/127.0;
           break;
-        case CC_BREATH_TO_FILTER_RESONANCE    : 
+        case CC_BREATH_TO_FILTER_RESONANCE: 
           breath_to_filter_resonance = data2/127.0;
           break;
-        case CC_BREATH_TO_OVERDRIVE           : 
+        case CC_BREATH_TO_OVERDRIVE: 
           breath_to_overdrive = data2/127.0;
           break;
-        case CC_MODULATION_TO_PULSE_WIDTH     : 
+        case CC_MODULATION_TO_PULSE_WIDTH: 
           modulation_to_pulse_width = data2/127.0;
           break;
-        case CC_MODULATION_TO_FILTER_CUTOFF   : 
+        case CC_MODULATION_TO_FILTER_CUTOFF: 
           modulation_to_filter_cutoff = data2/127.0;
           break;
         case CC_MODULATION_TO_FILTER_RESONANCE:
           modulation_to_filter_resonance = data2/127.0;
           break; 
-        case CC_MODULATION_TO_OVERDRIVE       : 
+        case CC_MODULATION_TO_OVERDRIVE: 
           modulation_to_overdrive = data2/127.0;
           break;
-        case CC_EXPRESSION_TO_PULSE_WIDTH     : 
+        case CC_EXPRESSION_TO_PULSE_WIDTH: 
           expression_to_pulse_width = data2/127.0;
           break;
-        case CC_EXPRESSION_TO_FILTER_CUTOFF   : 
+        case CC_EXPRESSION_TO_FILTER_CUTOFF: 
           expression_to_filter_cutoff = data2/127.0;
           break;
         case CC_EXPRESSION_TO_FILTER_RESONANCE: 
           expression_to_filter_resonance = data2/127.0;
           break;
-        case CC_EXPRESSION_TO_PORTAMENTO      :
+        case CC_EXPRESSION_TO_PORTAMENTO:
           expression_to_portamento = data2/127.0;
           break; 
-        case CC_EXPRESSION_TO_OVERDRIVE       : 
+        case CC_EXPRESSION_TO_OVERDRIVE: 
           expression_to_overdrive = data2/127.0;
           break;
-        case CC_PORTAMENTO_MIN                :
+        case CC_PORTAMENTO_MIN:
           portamento_min = data2/127.0*250;
           break; 
-        case CC_WAV_PLAYER                    : 
+        case CC_WAV_PLAYER: 
           if(data2==0) {
             wavplayer.stop();
           } else {
@@ -88,16 +98,16 @@ void processMIDI(void) {
             wavplayer.play(String(String(data2, DEC) +".WAV").c_str());
           }
           break;
-        case CC_WAV_PLAYER_GAIN               : 
+        case CC_WAV_PLAYER_GAIN: 
           wav_gain = data2/127.0;
           break;
-        case CC_LOAD_PATCH                    :
-          loadPatch(data2);
+        case CC_LOAD_PATCH:
+          loadPatchSD(data2);
           break; 
-        case CC_SAVE_PATCH                    : 
-          savePatch(data2);
+        case CC_SAVE_PATCH: 
+          savePatchSD(data2);
           break;
-        case CC_WAVE1_SHAPE                   : 
+        case CC_WAVE1_SHAPE: 
           if(data2 < 32) {
             wave1.begin(WAVEFORM_SINE);
             wave1_shape = WAVEFORM_SINE;
@@ -112,7 +122,7 @@ void processMIDI(void) {
             wave1_shape = WAVEFORM_TRIANGLE_VARIABLE;
           }
           break;
-        case CC_WAVE2_SHAPE                   : 
+        case CC_WAVE2_SHAPE: 
             if(data2 < 32) {
             wave2.begin(WAVEFORM_SINE);
           } else if(data2 < 64) {
@@ -123,7 +133,7 @@ void processMIDI(void) {
             wave2.begin(WAVEFORM_TRIANGLE_VARIABLE);
           }
           break;
-        case CC_WAVE3_SHAPE                   : 
+        case CC_WAVE3_SHAPE: 
            if(data2 < 32) {
             wave3.begin(WAVEFORM_SINE);
           } else if(data2 < 64) {
@@ -134,7 +144,7 @@ void processMIDI(void) {
             wave3.begin(WAVEFORM_TRIANGLE_VARIABLE);
           }
           break;
-        case CC_WAVE4_SHAPE                   : 
+        case CC_WAVE4_SHAPE: 
           if(data2 < 32) {
             wave4.begin(WAVEFORM_SINE);
           } else if(data2 < 64) {
@@ -145,82 +155,79 @@ void processMIDI(void) {
             wave4.begin(WAVEFORM_TRIANGLE_VARIABLE);
           }
           break;
-        case CC_WAVE1_GAIN                    : 
+        case CC_WAVE1_GAIN: 
           wave1_gain = (data2/127.0);
           break;
-        case CC_WAVE2_GAIN                    :
+        case CC_WAVE2_GAIN:
           wave2_gain = (data2/127.0);
           break; 
-        case CC_WAVE3_GAIN                    : 
+        case CC_WAVE3_GAIN: 
           wave3_gain = (data2/127.0);
           break;
-        case CC_WAVE4_GAIN                    : 
+        case CC_WAVE4_GAIN: 
           wave4_gain = (data2/127.0);
           break;
-        case CC_WAVE1_DETUNE_MULTIPLIER       :
+        case CC_WAVE1_DETUNE_MULTIPLIER:
           wave1_detune_multiplier = data2/127.0*0.75+0.25;
           break; 
-        case CC_WAVE2_DETUNE_MULTIPLIER       :
+        case CC_WAVE2_DETUNE_MULTIPLIER:
           wave2_detune_multiplier = data2/127.0*0.75+0.25;
           break; 
-        case CC_WAVE3_DETUNE_MULTIPLIER       :
+        case CC_WAVE3_DETUNE_MULTIPLIER:
           wave3_detune_multiplier = data2/127.0*0.75+0.25;
           break; 
-        case CC_WAVE4_DETUNE_MULTIPLIER       :
+        case CC_WAVE4_DETUNE_MULTIPLIER:
           wave4_detune_multiplier = data2/127.0*0.75+0.25;
           break; 
-        case CC_WAVE1_PULSE_WIDTH             :
+        case CC_WAVE1_PULSE_WIDTH:
           wave1_pulse_width = (data2/127.0);
           break; 
-        case CC_WAVE2_PULSE_WIDTH             : 
+        case CC_WAVE2_PULSE_WIDTH: 
           wave2_pulse_width = (data2/127.0);
           break;
-        case CC_WAVE3_PULSE_WIDTH             : 
+        case CC_WAVE3_PULSE_WIDTH: 
           wave3_pulse_width = (data2/127.0);
           break;
-        case CC_WAVE4_PULSE_WIDTH             :
+        case CC_WAVE4_PULSE_WIDTH:
           wave4_pulse_width = (data2/127.0);
           break; 
-        case CC_FILTER_RESONANCE_OFFSET       :
+        case CC_FILTER_RESONANCE_OFFSET:
           filter_q = data2/127.0*3;
           break; 
-        case CC_NOTE_OFFSET                   : 
+        case CC_NOTE_OFFSET: 
           note_offset=data2/127.0 * 24;
           break;
-        case CC_FINE_TUNING                   : 
+        case CC_FINE_TUNING: 
           default_tune=(data2/127.0/2+0.75);
           break;
-        case CC_MASTER_VOLUME                 : 
+        case CC_MASTER_VOLUME: 
           master_volume = data2/127.0;
           break;
-        case CC_FILTER_FREQUENCY_OFFSET       :
+        case CC_FILTER_FREQUENCY_OFFSET:
           filter_min_frequency = data2/127.0*5000.0;
           break; 
-        case CC_NOISE_PINK_GAIN               : 
+        case CC_NOISE_PINK_GAIN: 
           noise_pink_gain = data2/127.0;
           break;
-        case CC_NOISE_WHITE_GAIN              : 
+        case CC_NOISE_WHITE_GAIN: 
           noise_white_gain = data2/127.0;
           break;
-        case CC_EFFECTS_MIXER_CLEAN           :
+        case CC_EFFECTS_MIXER_CLEAN:
           effects_oscillators = data2/127.0;
           break; 
-        case CC_EFFECTS_MIXER_FLANGE          :
+        case CC_EFFECTS_MIXER_FLANGE:
           effects_flange = data2/127.0;
           break; 
-        case CC_EFFECTS_MIXER_CHORUS          : 
+        case CC_EFFECTS_MIXER_CHORUS: 
           effects_chorus = data2/127.0;
           break;
-        case CC_OSCILLATOR_OVERDRIVE          : 
-          distortion_mix = data2/127.0;
-          break;
-        case CC_EFFECTS_MIXER_DELAY           : 
+        case CC_EFFECTS_MIXER_DELAY: 
           effects_delay = data2/127.0;
           break;
-        case CC_REVERB_ROOM_SIZE              : 
+        case CC_REVERB_ROOM_SIZE: 
           reverb_size = data2/127.0;
           break;
-        case CC_EFFECTS_MIXER_DELAY_MS        :  
+        case CC_EFFECTS_MIXER_DELAY_MS:  
           effects_delay_ms = data2/127.0 * 250;
           delay1.delay(0, effects_delay_ms);
           delay1.delay(1, effects_delay_ms*2);
@@ -254,6 +261,15 @@ void processMIDI(void) {
         case CC_EXPRESSION_TO_LFO1_FREQ:
           expression_to_lfo1_freq = data2/127.0;
           break;
+        case CC_BREATH_TO_LFO1_RANGE:
+          breath_to_lfo1_range = data2/127.0;
+          break;
+        case CC_MODULATION_TO_LFO1_RANGE:
+          modulation_to_lfo1_range = data2/127.0;
+          break;
+        case CC_EXPRESSION_TO_LFO1_RANGE:
+          expression_to_lfo1_range = data2/127.0;
+          break;
 
         case CC_LFO2_FREQUENCY:
           lfo2_freq = data2/127.0;
@@ -281,6 +297,33 @@ void processMIDI(void) {
           break;
         case CC_EXPRESSION_TO_LFO2_FREQ:
           expression_to_lfo2_freq = data2/127.0;
+          break;
+        case CC_BREATH_TO_LFO2_RANGE:
+          breath_to_lfo2_range = data2/127.0;
+          break;
+        case CC_MODULATION_TO_LFO2_RANGE:
+          modulation_to_lfo2_range = data2/127.0;
+          break;
+        case CC_EXPRESSION_TO_LFO2_RANGE:
+          expression_to_lfo2_range = data2/127.0;
+          break;
+        case CC_WAVESHAPE1_GAIN:
+          waveshape1_gain = data2/127.0;
+          break;
+        case CC_WAVESHAPE2_GAIN:
+          waveshape2_gain = data2/127.0;
+          break;
+        case CC_WAVESHAPE3_GAIN:
+          waveshape3_gain = data2/127.0;
+          break;
+        case CC_WAVESHAPE4_GAIN:
+          waveshape4_gain = data2/127.0;
+          break;
+        case CC_WAVESHAPE_MODULATION_MULTIPLIER:
+          waveshape_modulation_multiplier = data2/127.0;
+          break;
+        case CC_WAVESHAPE_MODULATION_MULTIPLER_OFFSET:
+          waveshape_modulation_multiplier_offset = data2/127.0;
           break;
       }
       break;
