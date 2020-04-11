@@ -1,4 +1,12 @@
-//This is the overdrive waveform, a slightly amplified and clipped wavform to give warm saturation
+/*
+ * The Open Woodwind Project - OWP_Synth for Woodwind Controllers by Jeff Hopkins
+ * 
+ * This is the overdrive waveform, a slightly amplified and clipped wavform to give warm saturation
+ * 
+ * We can add up to four waveform distortions and add them to each of the four overdrives.
+ * 
+ */
+ 
 float driven_waveform[257] = {
 0.0000000000000,
 0.2269648063655,
