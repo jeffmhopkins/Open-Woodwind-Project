@@ -38,13 +38,13 @@ void processMIDI(void) {
     case usbMIDI.ControlChange: // 0xB0
       switch(data1) {
         case CC_MODULATION_WHEEL:
-          modulation.amplitude(data2/127.0, modulation_ramp_rate);
+          modulation.amplitude(data2/127.0, modulation_ramp_rate);sendcc(CC_MODULATION_WHEEL, data2*127.0);
           break;
         case CC_BREATH:
-          if(noteon) {breath.amplitude(lin_to_log(data2, 127, breath_gamma)/127.0, breath_ramp_rate);}
+          if(noteon) {breath.amplitude(lin_to_log(data2, 127, breath_gamma)/127.0, breath_ramp_rate);sendcc(CC_BREATH, data2*127.0);}
           break;
         case CC_EXPRESSION:
-          expression.amplitude(data2/127.0, expression_ramp_rate);
+          expression.amplitude(data2/127.0, expression_ramp_rate);sendcc(CC_EXPRESSION, data2*127.0);
           break;
         case CC_BREATH_TO_PULSE_WIDTH:
           breath_to_pulse_width = data2/127.0;
@@ -322,7 +322,7 @@ void processMIDI(void) {
         case CC_WAVESHAPE_MODULATION_MULTIPLIER:
           waveshape_modulation_multiplier = data2/127.0;
           break;
-        case CC_WAVESHAPE_MODULATION_MULTIPLER_OFFSET:
+        case CC_WAVESHAPE_MODULATION_MULTIPLIER_OFFSET:
           waveshape_modulation_multiplier_offset = data2/127.0;
           break;
       }
