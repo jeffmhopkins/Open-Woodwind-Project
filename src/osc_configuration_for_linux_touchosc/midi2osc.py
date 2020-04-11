@@ -2,7 +2,7 @@
 #encoding: utf-8
 """
 --------------------------------------------------------------------------------------------------------
-The Open Woodwind Project
+The Open Woodwind Project - https://github.com/jeffmhopkins/Open-Woodwind-Project
 --------------------------------------------------------------------------------------------------------
 This python script runs on my Raspberry Pi headless synth and receives MIDI messages from OWP_Synth 
 and converts them to OSC messags for the iPad. This is mainly so that when you load patches the GUI
