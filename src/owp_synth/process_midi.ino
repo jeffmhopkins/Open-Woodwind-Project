@@ -33,8 +33,12 @@ void processMIDI(void) {
       }
       note = data1;
       noteon = true;
-      lfo1.phase(0);
-      lfo2.phase(0);
+      if(lfo_reset_phase_on_new_note!=0.0) {//No phase change at 0
+        lfo1.phase(lfo_reset_phase_on_new_note*360);
+        lfo2.phase(lfo_reset_phase_on_new_note*360);
+      }
+      
+      
       break;
 
     case usbMIDI.ControlChange: // 0xB0
@@ -218,7 +222,8 @@ void processMIDI(void) {
           master_volume = data2/127.0;
           break;
         case CC_FILTER_FREQUENCY_OFFSET:
-          filter_min_frequency = data2/127.0*5000.0;
+          //filter_min_frequency = data2/127.0*5000.0;
+          filter_min_frequency = data2/127.0;
           break; 
         case CC_NOISE_PINK_GAIN: 
           noise_pink_gain = data2/127.0;
@@ -359,6 +364,8 @@ void processMIDI(void) {
         case CC_LFO2_DESTINATION_FILTER:
           lfo2_destination_filter = data2/127.0;
           break;
+        case CC_LFO_RESET_PHASE_ON_NEW_NOTE:
+          lfo_reset_phase_on_new_note = data2/127.0;
       }
       break;
 

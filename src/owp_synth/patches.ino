@@ -30,6 +30,7 @@ typedef struct Patch {
   float waveshape_clean_gain;
   float lfo1_destination_frequency, lfo1_destination_gain, lfo1_destination_filter;
   float lfo2_destination_frequency, lfo2_destination_gain, lfo2_destination_filter;
+  float lfo_reset_phase_on_new_note;
 };
 
 File  dataFile;
@@ -66,7 +67,8 @@ void savePatchSD(int i) {
                   waveshape_modulation_multiplier, waveshape_modulation_multiplier_offset,
                   waveshape_clean_gain,
                   lfo1_destination_frequency, lfo1_destination_gain, lfo1_destination_filter,
-                  lfo2_destination_frequency, lfo2_destination_gain, lfo1_destination_filter};
+                  lfo2_destination_frequency, lfo2_destination_gain, lfo1_destination_filter,
+                  lfo_reset_phase_on_new_note};
   if (SD.exists(String(String(i, DEC) +".PAT").c_str())) {
     SD.remove(String(String(i, DEC) +".PAT").c_str());
   }
@@ -169,6 +171,7 @@ void loadPatchSD(int i) {
     lfo2_destination_frequency = patch.lfo2_destination_frequency;
     lfo2_destination_gain = patch.lfo2_destination_gain;
     lfo1_destination_filter = patch.lfo1_destination_filter;
+    lfo_reset_phase_on_new_note = patch.lfo_reset_phase_on_new_note;
 
     updateOSC();
   }
@@ -249,6 +252,7 @@ void updateOSC() {
   sendcc(CC_LFO2_DESTINATION_FREQUENCY, lfo2_destination_frequency);
   sendcc(CC_LFO2_DESTINATION_GAIN, lfo2_destination_gain);
   sendcc(CC_LFO2_DESTINATION_FILTER, lfo2_destination_filter);
+  sendcc(CC_LFO_RESET_PHASE_ON_NEW_NOTE, lfo_reset_phase_on_new_note);
 }
 
 void sendcc(int cc, float value) {
