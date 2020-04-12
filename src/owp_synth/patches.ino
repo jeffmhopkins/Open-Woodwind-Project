@@ -4,7 +4,7 @@
  * Handles saving and loading the patch files from the SD card.
  * 
  */
-typedef struct Patch {
+struct Patch {
   float wave1_shape, wave2_shape, wave3_shape, wave4_shape;
   float wave1_pulse_width, wave2_pulse_width, wave3_pulse_width, wave4_pulse_width;
   float wave1_detune_multiplier, wave2_detune_multiplier, wave3_detune_multiplier, wave4_detune_multiplier;
@@ -31,6 +31,7 @@ typedef struct Patch {
   float lfo1_destination_frequency, lfo1_destination_gain, lfo1_destination_filter;
   float lfo2_destination_frequency, lfo2_destination_gain, lfo2_destination_filter;
   float lfo_reset_phase_on_new_note;
+  float breath_to_wave3_wave4_gain, modulation_to_wave3_wave4_gain, expression_to_wave4_wave4_gain;
 };
 
 File  dataFile;
@@ -68,7 +69,8 @@ void savePatchSD(int i) {
                   waveshape_clean_gain,
                   lfo1_destination_frequency, lfo1_destination_gain, lfo1_destination_filter,
                   lfo2_destination_frequency, lfo2_destination_gain, lfo1_destination_filter,
-                  lfo_reset_phase_on_new_note};
+                  lfo_reset_phase_on_new_note,
+                  breath_to_wave3_wave4_gain, modulation_to_wave3_wave4_gain, expression_to_wave4_wave4_gain};
   if (SD.exists(String(String(i, DEC) +".PAT").c_str())) {
     SD.remove(String(String(i, DEC) +".PAT").c_str());
   }
@@ -172,6 +174,9 @@ void loadPatchSD(int i) {
     lfo2_destination_gain = patch.lfo2_destination_gain;
     lfo1_destination_filter = patch.lfo1_destination_filter;
     lfo_reset_phase_on_new_note = patch.lfo_reset_phase_on_new_note;
+    breath_to_wave3_wave4_gain = patch.breath_to_wave3_wave4_gain;
+    modulation_to_wave3_wave4_gain = patch.modulation_to_wave3_wave4_gain;
+    expression_to_wave4_wave4_gain = patch.expression_to_wave4_wave4_gain;
 
     updateOSC();
   }
@@ -253,6 +258,9 @@ void updateOSC() {
   sendcc(CC_LFO2_DESTINATION_GAIN, lfo2_destination_gain);
   sendcc(CC_LFO2_DESTINATION_FILTER, lfo2_destination_filter);
   sendcc(CC_LFO_RESET_PHASE_ON_NEW_NOTE, lfo_reset_phase_on_new_note);
+  sendcc(CC_BREATH_TO_WAVE3_WAVE4_GAIN, breath_to_wave3_wave4_gain);
+  sendcc(CC_MODULATION_TO_WAVE3_WAVE4_GAIN, modulation_to_wave3_wave4_gain); 
+  sendcc(CC_EXPRESSION_TO_WAVE3_WAVE4_GAIN, expression_to_wave4_wave4_gain);
 }
 
 void sendcc(int cc, float value) {

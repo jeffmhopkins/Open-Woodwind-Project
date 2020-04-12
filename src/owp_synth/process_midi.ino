@@ -21,7 +21,7 @@ void processMIDI(void) {
         noteon = false;
       }
       break;
-
+      
     case usbMIDI.NoteOn: // 0x90
       if(noteon) {
         if(pitchbend_reset_on_noteon) {
@@ -33,12 +33,10 @@ void processMIDI(void) {
       }
       note = data1;
       noteon = true;
-      if(lfo_reset_phase_on_new_note!=0.0) {//No phase change at 0
+      if(lfo_reset_phase_on_new_note!=0.0) {//No phase change at 0 (can be set to 127 for start of sample)
         lfo1.phase(lfo_reset_phase_on_new_note*360);
         lfo2.phase(lfo_reset_phase_on_new_note*360);
       }
-      
-      
       break;
 
     case usbMIDI.ControlChange: // 0xB0
@@ -366,6 +364,16 @@ void processMIDI(void) {
           break;
         case CC_LFO_RESET_PHASE_ON_NEW_NOTE:
           lfo_reset_phase_on_new_note = data2/127.0;
+          break;
+        case CC_BREATH_TO_WAVE3_WAVE4_GAIN:
+          breath_to_wave3_wave4_gain = data2/127.0;
+          break;
+        case CC_MODULATION_TO_WAVE3_WAVE4_GAIN:
+          modulation_to_wave3_wave4_gain = data2/127.0;
+          break;
+        case CC_EXPRESSION_TO_WAVE3_WAVE4_GAIN:
+          expression_to_wave4_wave4_gain = data2/127.0;
+          break;
       }
       break;
 
