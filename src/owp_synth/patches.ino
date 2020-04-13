@@ -17,7 +17,7 @@ struct Patch {
   float expression_to_pulse_width, expression_to_filter_cutoff, expression_to_filter_resonance, expression_to_portamento, expression_to_overdrive;
   float note_offset, default_tune;
   float effects_oscillators, effects_flange, effects_chorus, effects_delay, effects_delay_ms;
-  float portamento_min;
+  float portamento_min_multiplier;
   float wav_gain;
   float lfo1_gain, lfo1_freq, lfo1_range;
   float breath_to_lfo1_gain, modulation_to_lfo1_gain, expression_to_lfo1_gain;
@@ -56,7 +56,7 @@ void savePatchSD(int i) {
                   expression_to_pulse_width, expression_to_filter_cutoff, expression_to_filter_resonance, expression_to_portamento, expression_to_overdrive,
                   note_offset, default_tune,
                   effects_oscillators, effects_flange, effects_chorus, effects_delay, effects_delay_ms,
-                  portamento_min,
+                  portamento_min_multiplier,
                   wav_gain,
                   lfo1_gain, lfo1_freq, lfo1_range,
                   breath_to_lfo1_gain, modulation_to_lfo1_gain, expression_to_lfo1_gain,
@@ -140,7 +140,7 @@ void loadPatchSD(int i) {
     effects_chorus = patch.effects_chorus;
     effects_delay = patch.effects_delay;
     effects_delay_ms = patch.effects_delay_ms;
-    portamento_min = patch.portamento_min;
+    portamento_min_multiplier = patch.portamento_min_multiplier;
     wav_gain = patch.wav_gain;
     lfo1_gain = patch.lfo1_gain;
     lfo1_freq = patch.lfo1_freq;
@@ -218,13 +218,13 @@ void updateOSC() {
   sendcc(CC_EXPRESSION_TO_FILTER_RESONANCE, expression_to_filter_resonance);
   sendcc(CC_EXPRESSION_TO_PORTAMENTO, expression_to_portamento);
   sendcc(CC_EXPRESSION_TO_OVERDRIVE, expression_to_overdrive);
-  sendcc(CC_NOTE_OFFSET, note_offset);
+  sendcc(CC_NOTE_OFFSET, note_offset/127.0);
   sendcc(CC_EFFECTS_MIXER_CLEAN, effects_oscillators);
   sendcc(CC_EFFECTS_MIXER_FLANGE, effects_flange);
   sendcc(CC_EFFECTS_MIXER_CHORUS, effects_chorus);
   sendcc(CC_EFFECTS_MIXER_DELAY, effects_delay);
   sendcc(CC_EFFECTS_MIXER_DELAY_MS, effects_delay_ms);
-  sendcc(CC_PORTAMENTO_MIN, portamento_min);
+  sendcc(CC_PORTAMENTO_MIN_MULTIPLIER, portamento_min_multiplier);
   sendcc(CC_WAV_PLAYER_GAIN, wav_gain);
   sendcc(CC_LFO1_AMOUNT, lfo1_gain);
   sendcc(CC_LFO1_FREQUENCY, lfo1_freq);

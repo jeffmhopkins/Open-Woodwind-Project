@@ -23,13 +23,16 @@ void processMIDI(void) {
       break;
       
     case usbMIDI.NoteOn: // 0x90
+    AudioNoInterrupts();
       if(noteon) {
-        if(pitchbend_reset_on_noteon) {
+        if((pitchbend_value < -8155) | (pitchbend_value > 8155)) {
           pitchbend.amplitude(0.0);
+          glide_frequency.amplitude((pow(2.0, ((float)(24+data1+note_offset+tuning_value)/12.0))/wave_freq));
+        } else {
+          glide_frequency.amplitude((pow(2.0, ((float)(24+data1+note_offset+tuning_value)/12.0))/wave_freq), portamento_min_multiplier * portamento_max + expression.read() * (portamento_max - portamento_min_multiplier * portamento_max) * expression_to_portamento);
         }
-        glide_frequency.amplitude((pow(2.0, ((float)(data1+note_offset)/12.0))/wave_freq), portamento_min + expression.read() * (portamento_max - portamento_min) * expression_to_portamento);
       } else {
-        glide_frequency.amplitude((pow(2.0, ((float)(data1+note_offset)/12.0))/wave_freq));
+        glide_frequency.amplitude((pow(2.0, ((float)(24+data1+note_offset+tuning_value)/12.0))/wave_freq));
       }
       note = data1;
       noteon = true;
@@ -37,6 +40,7 @@ void processMIDI(void) {
         lfo1.phase(lfo_reset_phase_on_new_note*360);
         lfo2.phase(lfo_reset_phase_on_new_note*360);
       }
+      AudioInterrupts();
       break;
 
     case usbMIDI.ControlChange: // 0xB0
@@ -89,8 +93,8 @@ void processMIDI(void) {
         case CC_EXPRESSION_TO_OVERDRIVE: 
           expression_to_overdrive = data2/127.0;
           break;
-        case CC_PORTAMENTO_MIN:
-          portamento_min = data2/127.0*250;
+        case CC_PORTAMENTO_MIN_MULTIPLIER:
+          portamento_min_multiplier = data2/127.0;
           break; 
         case CC_WAV_PLAYER: 
           if(data2==0) {
@@ -211,7 +215,7 @@ void processMIDI(void) {
           filter_q = data2/127.0*3;
           break; 
         case CC_NOTE_OFFSET: 
-          note_offset=data2/127.0 * 24;
+          note_offset=(int)(data2-64);
           break;
         case CC_FINE_TUNING: 
           default_tune=(data2/127.0/2+0.75);
@@ -380,6 +384,7 @@ void processMIDI(void) {
 
     case usbMIDI.PitchBend: // 0xE0
       pitchbend.amplitude((data1+data2*128.0-8192.0)/8192.0, pitchbend_ramp_rate);
+      pitchbend_value = data1+data2*128.0-8192.0;
       break;
 
     default:

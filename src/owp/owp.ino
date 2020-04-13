@@ -131,11 +131,11 @@ void setup() {
 void loop() {
   // Update our breath, fingered note, and CC messages
   updateSensors();
-        // Send CC messages if it is time
-      if(millis() > cc_time + cc_delay) {
+      //  // Send CC messages if it is time
+      //if(millis() > cc_time + cc_delay) {
         sendCC();
-        cc_time = millis();
-      }
+      //  cc_time = millis();
+      //}
   
   
   //STATE_NOTE_OFF
@@ -209,7 +209,7 @@ void updateSensors() {
 void updateBreath() {
   float value = SETTINGS_BREATH_GAIN * analogRead(A0);
   if(value>1023) value = 1023;
-  breath_measured = breath_averaging * value + (1.0f - breath_averaging) * breath_measured;
+  breath_measured = value; //breath_averaging * value + (1.0f - breath_averaging) * breath_measured;
 }
 
 void updateNote() {
@@ -309,7 +309,7 @@ int parseNote() {
     imu_pb_active = false;
   }
   
-  return note + 12;
+  return note;
 }
 
 void sendNoteOn(int note) {
@@ -369,6 +369,7 @@ void sendCC_pitchbend() {
   } else { 
     //still within the deadband, so ensure we are sending expression value of 0
     //CCW Expression
+    
     usbSendControlChange(11, 0, 1);
   }
   
@@ -411,6 +412,7 @@ void sendCC_modulation() {
     float d= deg_y;
     if(d < imu_down_limit) d = imu_down_limit;
     if(d > imu_up_limit)   d = imu_up_limit;
+    
     usbSendControlChange(1, (int)mapf(d, imu_down_limit, imu_up_limit, 0, 127), 1); //deg
 
 }
@@ -429,9 +431,9 @@ float mapf(float x, float in_min, float in_max, float out_min, float out_max) {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-void usbSendControlChange(int channel, int value, int cc) {
+void usbSendControlChange(int cc, int value, int channel) {
   if(CC[cc] != value) {
-    usbMIDI.sendControlChange(channel, value, cc);
+    usbMIDI.sendControlChange(cc, value, channel);
     CC[cc] = value;
   }
 }
