@@ -1,9 +1,105 @@
 /*
  * The Open Woodwind Project - OWP_Synth for Woodwind Controllers by Jeff Hopkins
  * 
+ * =============================================================================================================================================
+ * 
  * Handles saving and loading the patch files from the SD card.
  * 
  */
+
+#define CC_MODULATION_WHEEL               1
+#define CC_BREATH                         2
+#define CC_EXPRESSION                     11
+#define CC_BREATH_TO_PULSE_WIDTH          20
+#define CC_BREATH_TO_FILTER_CUTOFF        21
+#define CC_BREATH_TO_FILTER_RESONANCE     22
+#define CC_BREATH_TO_OVERDRIVE            23
+#define CC_MODULATION_TO_PULSE_WIDTH      24
+#define CC_MODULATION_TO_FILTER_CUTOFF    25
+#define CC_MODULATION_TO_FILTER_RESONANCE 26
+#define CC_MODULATION_TO_OVERDRIVE        27
+#define CC_EXPRESSION_TO_PULSE_WIDTH      28
+#define CC_EXPRESSION_TO_FILTER_CUTOFF    29
+#define CC_EXPRESSION_TO_FILTER_RESONANCE 30
+#define CC_EXPRESSION_TO_PORTAMENTO       31
+#define CC_EXPRESSION_TO_OVERDRIVE        32
+#define CC_PORTAMENTO_MIN_MULTIPLIER      33
+#define CC_WAV_PLAYER                     34
+#define CC_WAV_PLAYER_GAIN                35
+#define CC_LOAD_PATCH                     36
+#define CC_SAVE_PATCH                     37
+#define CC_LFO1_FREQUENCY                 38
+#define CC_LFO1_AMOUNT                    39
+#define CC_LFO1_RANGE                     40
+#define CC_WAVE1_SHAPE                    41
+#define CC_WAVE2_SHAPE                    42
+#define CC_WAVE3_SHAPE                    43
+#define CC_WAVE4_SHAPE                    44
+#define CC_LFO2_FREQUENCY                 45
+#define CC_LFO2_AMOUNT                    46
+#define CC_LFO2_RANGE                     47
+#define CC_MODULATION_TO_LFO1_GAIN        48
+#define CC_BREATH_TO_LFO1_GAIN            49
+#define CC_EXPRESSION_TO_LFO1_GAIN        50
+#define CC_WAVE1_GAIN                     51
+#define CC_WAVE2_GAIN                     52
+#define CC_WAVE3_GAIN                     53
+#define CC_WAVE4_GAIN                     54
+#define CC_MODULATION_TO_LFO1_FREQ        55
+#define CC_BREATH_TO_LFO1_FREQ            56
+#define CC_EXPRESSION_TO_LFO1_FREQ        57
+#define CC_MODULATION_TO_LFO2_GAIN        58
+#define CC_BREATH_TO_LFO2_GAIN            59
+#define CC_EXPRESSION_TO_LFO2_GAIN        60
+#define CC_WAVE1_DETUNE_MULTIPLIER        61
+#define CC_WAVE2_DETUNE_MULTIPLIER        62
+#define CC_WAVE3_DETUNE_MULTIPLIER        63
+#define CC_WAVE4_DETUNE_MULTIPLIER        64
+#define CC_MODULATION_TO_LFO2_FREQ        65
+#define CC_BREATH_TO_LFO2_FREQ            66
+#define CC_EXPRESSION_TO_LFO2_FREQ        67
+#define CC_MODULATION_TO_LFO1_RANGE       68
+#define CC_BREATH_TO_LFO1_RANGE           69
+#define CC_EXPRESSION_TO_LFO1_RANGE       70
+#define CC_WAVE1_PULSE_WIDTH              71
+#define CC_WAVE2_PULSE_WIDTH              72
+#define CC_WAVE3_PULSE_WIDTH              73
+#define CC_WAVE4_PULSE_WIDTH              74
+#define CC_FILTER_RESONANCE_OFFSET        76
+#define CC_NOTE_OFFSET                    77
+#define CC_FINE_TUNING                    78
+#define CC_MASTER_VOLUME                  81
+#define CC_FILTER_FREQUENCY_OFFSET        82
+#define CC_NOISE_PINK_GAIN                83
+#define CC_NOISE_WHITE_GAIN               84
+#define CC_EFFECTS_MIXER_CLEAN            85
+#define CC_EFFECTS_MIXER_FLANGE           86
+#define CC_EFFECTS_MIXER_CHORUS           87
+#define CC_EFFECTS_MIXER_DELAY            90
+#define CC_REVERB_ROOM_SIZE               91
+#define CC_EFFECTS_MIXER_DELAY_MS         92
+#define CC_MODULATION_TO_LFO2_RANGE       93
+#define CC_BREATH_TO_LFO2_RANGE           94
+#define CC_EXPRESSION_TO_LFO2_RANGE       95
+#define CC_WAVESHAPE1_GAIN                96
+#define CC_WAVESHAPE2_GAIN                97
+#define CC_WAVESHAPE3_GAIN                98
+#define CC_WAVESHAPE4_GAIN                99
+#define CC_WAVESHAPE_MODULATION_MULTIPLIER        100
+#define CC_WAVESHAPE_MODULATION_MULTIPLIER_OFFSET 101
+#define CC_WAVESHAPE_CLEAN_GAIN                   102
+#define CC_LFO1_DESTINATION_FREQUENCY     103
+#define CC_LFO1_DESTINATION_GAIN          104
+#define CC_LFO1_DESTINATION_FILTER        105
+#define CC_LFO2_DESTINATION_FREQUENCY     106
+#define CC_LFO2_DESTINATION_GAIN          107
+#define CC_LFO2_DESTINATION_FILTER        108
+#define CC_LFO_RESET_PHASE_ON_NEW_NOTE    109
+#define CC_BREATH_TO_WAVE3_WAVE4_GAIN     110
+#define CC_MODULATION_TO_WAVE3_WAVE4_GAIN 111
+#define CC_EXPRESSION_TO_WAVE3_WAVE4_GAIN 112 //TODO ADD THE REST OF THE CC STUFF FOR vca_gate_bypass
+#define CC_VCA_GATE_BYPASS                113 //TODO ADD THE REST OF THE CC STUFF FOR filter_bypass
+ 
 struct Patch {
   float wave1_shape, wave2_shape, wave3_shape, wave4_shape;
   float wave1_pulse_width, wave2_pulse_width, wave3_pulse_width, wave4_pulse_width;
@@ -32,6 +128,7 @@ struct Patch {
   float lfo2_destination_frequency, lfo2_destination_gain, lfo2_destination_filter;
   float lfo_reset_phase_on_new_note;
   float breath_to_wave3_wave4_gain, modulation_to_wave3_wave4_gain, expression_to_wave4_wave4_gain;
+  
 };
 
 File  dataFile;

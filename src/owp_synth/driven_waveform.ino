@@ -1,9 +1,13 @@
 /*
  * The Open Woodwind Project - OWP_Synth for Woodwind Controllers by Jeff Hopkins
  * 
- * This is the overdrive waveform, a slightly amplified and clipped wavform to give warm saturation
+ * =============================================================================================================================================
  * 
- * We can add up to four waveform distortions and add them to each of the four overdrives.
+ * These are the overdrive waveforms, a slightly amplified and clipped wavform to give warm saturation
+ * 
+ * We can add up to six waveform distortions and add them to each of the six overdrives.
+ * 
+ * You can plot these in excel to the responses. They go from -1 to 1
  * 
  */
 
