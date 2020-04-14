@@ -1,5 +1,11 @@
 # OSC Configuration
 
+Two Options: 
+1. Windows/Mac run the TouchOSC MIDI bridge, and then patch the MIDI bridge output into the OWP_Synth
+2. Linux/Raspberry Pi -> install the software setup below.
+
+# Linux Install
+
 There are a couple things needed to control the OWP_Synth with the iPad OSC interface.
 
 1. TouchOSC on an iPad (loaded with the owp_synth.touchosc file)
