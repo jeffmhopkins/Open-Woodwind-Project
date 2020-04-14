@@ -1,19 +1,19 @@
-# OSC Configuration
+# OSC Configuration - Windows / Mac
 
-Two Options: 
-1. Windows/Mac run the TouchOSC MIDI bridge, and then patch the MIDI bridge output into the OWP_Synth
-2. Linux/Raspberry Pi -> install the software setup below.
+Pretty Basic 
+1. TouchOSC on an ipad (loaded with the owp_synth.touchosc file), configured to point at the IP of the host computer
+1. Windows/Mac run the TouchOSC MIDI bridge (https://hexler.net/docs/touchosc-configuration-connections-bridge)
+2. Patch the OSCBridge MIDI device to the OWP_Synth
 
-# Linux Install
+# OSC Configuration - Linux
 
 There are a couple things needed to control the OWP_Synth with the iPad OSC interface.
-
-1. TouchOSC on an iPad (loaded with the owp_synth.touchosc file)
+1. TouchOSC on an iPad (loaded with the owp_synth.touchosc file), configured to point to the iPad IP
 2. Linux install (I'm using a Raspberry Pi) running the midi2osc and osc2midi bridges and patching the controller to these bridges
 3. Configuration files for the bridges
 4. Autostart the services at boot
 
-# Install Services
+# Linux - Install Services
 
 1. midi2osc bridge is a Python script and located here: https://github.com/jeffmhopkins/Open-Woodwind-Project/blob/master/src/osc_configuration_for_linux_touchosc/midi2osc.py This needs to be modified to point at the ip/port of your iPad, and located in **~/Desktop/midi2osc2.py**
 
@@ -21,7 +21,7 @@ There are a couple things needed to control the OWP_Synth with the iPad OSC inte
 
 3. You then probably need an ALSA MIDI bridge, aj2midid (**sudo apt-get install aj2midid**)
 
-# Configure services to Autostart
+# Linux - Configure services to Autostart
 
 All these services need started at boot (as well as qjackctl for auto MIDI patching)
 
@@ -35,7 +35,7 @@ This can be done by adding:
 
 to **~/.config/autostart/.desktop** (this is the autostart script for the Raspbian window manager)
 
-# Configure Patchbay for auto MIDI Routing
+# Linux - Configure Jack Patchbay for auto MIDI Routing
 
 Jack then needs a patchbay setup where it auto patches the MIDI as follows:
 1. Controller (ALSA) to Synth (ALSA) (this allows your controller to send MIDI to the synth)
