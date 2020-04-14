@@ -7,7 +7,7 @@
  * 
  */
 
- #define CC_MODULATION_WHEEL               1
+#define CC_MODULATION_WHEEL               1
 #define CC_BREATH                         2
 #define CC_EXPRESSION                     11
 #define CC_BREATH_TO_PULSE_WIDTH          20
