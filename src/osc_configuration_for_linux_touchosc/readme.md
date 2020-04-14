@@ -2,7 +2,7 @@
 
 There are a couple things needed to control the OWP_Synth with the iPad OSC interface.
 
-1. TouchOSC on an iPad
+1. TouchOSC on an iPad (loaded with the owp_synth.touchosc file)
 2. Linux install (I'm using a Raspberry Pi) running the midi2osc and osc2midi bridges and patching the controller to these bridges
 3. Configuration files for the bridges
 
