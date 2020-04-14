@@ -18,7 +18,7 @@ There are a couple things needed to control the OWP_Synth with the iPad OSC inte
 
 All these services need started at boot (as well as qjackctl for auto MIDI patching)
 
-1. Modify the **~/.config/autostart/.desktop** to run the startup.sh script (https://github.com/jeffmhopkins/Open-Woodwind-Project/blob/master/src/osc_configuration_for_linux_touchosc/startup.sh) 
+1. Modify the **~/.config/autostart/.desktop** to run the **startup.sh** script (https://github.com/jeffmhopkins/Open-Woodwind-Project/blob/master/src/osc_configuration_for_linux_touchosc/startup.sh) 
 
 This can be done by adding:
 
