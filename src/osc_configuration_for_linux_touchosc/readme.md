@@ -28,6 +28,8 @@ This can be done by adding:
 
 to **~/.config/autostart/.desktop** (this is the autostart script for the Raspbian window manager)
 
+# Configure Patchbay for auto MIDI Routing
+
 Jack then needs a patchbay setup where it auto patches the MIDI as follows:
 1. Controller (ALSA) to Synth (ALSA) (this allows your controller to send MIDI to the synth)
 2. osc2midi (MIDI) to aj2midi (MIDI), aj2midi (ALSA) to Synth (ALSA) (this is required because you can't patch MIDI to ALSA, and allows the iPad to control the synth via CC messages)
