@@ -3,11 +3,11 @@
  * 
  * =============================================================================================================================================
  * 
- * Handles saving and loading the patch files from the SD card.
+ * Handles saving and loading the patch files from the SD card
  * 
  */
 
-#define CC_MODULATION_WHEEL               1
+ #define CC_MODULATION_WHEEL               1
 #define CC_BREATH                         2
 #define CC_EXPRESSION                     11
 #define CC_BREATH_TO_PULSE_WIDTH          20
@@ -97,8 +97,11 @@
 #define CC_LFO_RESET_PHASE_ON_NEW_NOTE    109
 #define CC_BREATH_TO_WAVE3_WAVE4_GAIN     110
 #define CC_MODULATION_TO_WAVE3_WAVE4_GAIN 111
-#define CC_EXPRESSION_TO_WAVE3_WAVE4_GAIN 112 //TODO ADD THE REST OF THE CC STUFF FOR vca_gate_bypass
-#define CC_VCA_GATE_BYPASS                113 //TODO ADD THE REST OF THE CC STUFF FOR filter_bypass
+#define CC_EXPRESSION_TO_WAVE3_WAVE4_GAIN 112
+#define CC_WAVE3_WAVE4_GAIN_MODULATION_OFFSET   113 
+#define CC_VCA_GATE_BYPASS                114
+#define CC_FILTER_BYPASS                  115
+#define CC_FILTER_TYPE                    116
  
 struct Patch {
   float wave1_shape, wave2_shape, wave3_shape, wave4_shape;
@@ -128,6 +131,8 @@ struct Patch {
   float lfo2_destination_frequency, lfo2_destination_gain, lfo2_destination_filter;
   float lfo_reset_phase_on_new_note;
   float breath_to_wave3_wave4_gain, modulation_to_wave3_wave4_gain, expression_to_wave4_wave4_gain;
+  float wave3_wave4_gain_modulation_offset;
+  float vca_gate_bypass, filter_bypass, filter_type;
   
 };
 
@@ -167,7 +172,9 @@ void savePatchSD(int i) {
                   lfo1_destination_frequency, lfo1_destination_gain, lfo1_destination_filter,
                   lfo2_destination_frequency, lfo2_destination_gain, lfo1_destination_filter,
                   lfo_reset_phase_on_new_note,
-                  breath_to_wave3_wave4_gain, modulation_to_wave3_wave4_gain, expression_to_wave4_wave4_gain};
+                  breath_to_wave3_wave4_gain, modulation_to_wave3_wave4_gain, expression_to_wave4_wave4_gain,
+                  wave3_wave4_gain_modulation_offset,
+                  vca_gate_bypass,filter_bypass,filter_type};
   if (SD.exists(String(String(i, DEC) +".PAT").c_str())) {
     SD.remove(String(String(i, DEC) +".PAT").c_str());
   }
@@ -274,7 +281,10 @@ void loadPatchSD(int i) {
     breath_to_wave3_wave4_gain = patch.breath_to_wave3_wave4_gain;
     modulation_to_wave3_wave4_gain = patch.modulation_to_wave3_wave4_gain;
     expression_to_wave4_wave4_gain = patch.expression_to_wave4_wave4_gain;
-
+    wave3_wave4_gain_modulation_offset = patch.wave3_wave4_gain_modulation_offset;
+    vca_gate_bypass = patch.vca_gate_bypass;
+    filter_bypass = patch.filter_bypass;
+    filter_type = patch.filter_type;
     updateOSC();
   }
 }
@@ -358,6 +368,10 @@ void updateOSC() {
   sendcc(CC_BREATH_TO_WAVE3_WAVE4_GAIN, breath_to_wave3_wave4_gain);
   sendcc(CC_MODULATION_TO_WAVE3_WAVE4_GAIN, modulation_to_wave3_wave4_gain); 
   sendcc(CC_EXPRESSION_TO_WAVE3_WAVE4_GAIN, expression_to_wave4_wave4_gain);
+  sendcc(CC_WAVE3_WAVE4_GAIN_MODULATION_OFFSET, wave3_wave4_gain_modulation_offset);
+  sendcc(CC_VCA_GATE_BYPASS, vca_gate_bypass);
+  sendcc(CC_FILTER_BYPASS, filter_bypass);
+  sendcc(CC_FILTER_TYPE, filter_type);
 }
 
 void sendcc(int cc, float value) {
