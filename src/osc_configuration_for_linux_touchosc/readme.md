@@ -6,13 +6,27 @@ There are a couple things needed to control the OWP_Synth with the iPad OSC inte
 2. Linux install (I'm using a Raspberry Pi) running the midi2osc and osc2midi bridges and patching the controller to these bridges
 3. Configuration files for the bridges
 
-midi2osc bridge scipt is located here: https://github.com/jeffmhopkins/Open-Woodwind-Project/blob/master/src/osc_configuration_for_linux_touchosc/midi2osc.py
+# Install Services
 
-osc2midi bridge is a separate github project, located at https://github.com/ssj71/OSC2MIDI it is configured with https://github.com/jeffmhopkins/Open-Woodwind-Project/blob/master/src/osc_configuration_for_linux_touchosc/osc2midi.omm
+1. midi2osc bridge is a Python script and located here: https://github.com/jeffmhopkins/Open-Woodwind-Project/blob/master/src/osc_configuration_for_linux_touchosc/midi2osc.py
 
-You then probably need an ALSA MIDI bridge, aj2midid (sudo apt-get install aj2midid)
+2. osc2midi bridge is a separate github project, located at https://github.com/ssj71/OSC2MIDI it is configured with https://github.com/jeffmhopkins/Open-Woodwind-Project/blob/master/src/osc_configuration_for_linux_touchosc/osc2midi.omm
 
-Both three services need started at boot (as well as qjackctl for auto MIDI patching)
+3. You then probably need an ALSA MIDI bridge, aj2midid (sudo apt-get install aj2midid)
+
+# Configure services to Autostart
+
+All these services need started at boot (as well as qjackctl for auto MIDI patching)
+
+1. Modify the ~/.config/autostart/.desktop to run the startup.sh script (https://github.com/jeffmhopkins/Open-Woodwind-Project/blob/master/src/osc_configuration_for_linux_touchosc/startup.sh) 
+
+This can be done by adding:
+
+[Desktop Entry]
+Type=application
+Exec=/home/pi/Desktop/startup.sh
+
+to ~/.config/autostart/.desktop (this is the autostart script for the Raspbian window manager
 
 Jack then needs a patchbay setup where it auto patches the MIDI as follows:
 1. Controller (ALSA) to Synth (ALSA) (this allows your controller to send MIDI to the synth)
