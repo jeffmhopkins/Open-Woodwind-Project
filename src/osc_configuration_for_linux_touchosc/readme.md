@@ -22,8 +22,8 @@ All these services need started at boot (as well as qjackctl for auto MIDI patch
 
 This can be done by adding:
 
-[Desktop Entry]
-Type=application
+[Desktop Entry]\n
+Type=application\n
 Exec=/home/pi/Desktop/startup.sh
 
 to ~/.config/autostart/.desktop (this is the autostart script for the Raspbian window manager
