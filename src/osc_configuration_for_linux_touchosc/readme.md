@@ -9,7 +9,7 @@ There are a couple things needed to control the OWP_Synth with the iPad OSC inte
 
 # Install Services
 
-1. midi2osc bridge is a Python script and located here: https://github.com/jeffmhopkins/Open-Woodwind-Project/blob/master/src/osc_configuration_for_linux_touchosc/midi2osc.py
+1. midi2osc bridge is a Python script and located here: https://github.com/jeffmhopkins/Open-Woodwind-Project/blob/master/src/osc_configuration_for_linux_touchosc/midi2osc.py This needs to be modified to point at the ip/port of your iPad
 
 2. osc2midi bridge is a separate github project, located at https://github.com/ssj71/OSC2MIDI it is configured with https://github.com/jeffmhopkins/Open-Woodwind-Project/blob/master/src/osc_configuration_for_linux_touchosc/osc2midi.omm
 
