@@ -246,6 +246,8 @@ float portamento;
 float pitchbend_multiplier;
 float pulsewidth_calculated;
 float overdrive_calculated;
+float filter_frequency_calculated;
+float filter_resonance_calculated;
 int   pitchbend_value;
 float wave3_wave4_gain_modulation_offset;
 
@@ -491,15 +493,21 @@ void setup() {
   AudioInterrupts();
 }
 
-void loop() { 
-  pitchbend_multiplier = pow(2.0, (pitchbend_range * (pitchbend.read())/12.0));
-  
-  pulsewidth_calculated = bound1(breath.read()* breath_to_pulse_width + 
-                                 modulation.read() * modulation_to_pulse_width + 
-                                 expression.read() * expression_to_pulse_width);
-  overdrive_calculated = bound1(breath.read() * breath_to_overdrive +
-                                modulation.read() * modulation_to_overdrive +
-                                expression.read() * expression_to_overdrive);
+void loop() {
+  //Do some math before we start turning off the audio interrupts, cleans up some stuff visually below too
+  pitchbend_multiplier        = pow(2.0, (pitchbend_range * (pitchbend.read())/12.0));
+  pulsewidth_calculated       = bound1(breath.read()* breath_to_pulse_width + 
+                                         modulation.read() * modulation_to_pulse_width + 
+                                         expression.read() * expression_to_pulse_width);
+  overdrive_calculated        = bound1(breath.read() * breath_to_overdrive +
+                                         modulation.read() * modulation_to_overdrive +
+                                         expression.read() * expression_to_overdrive);
+  filter_frequency_calculated = bound1(filter_min_frequency + bound1(breath_to_filter_cutoff * breath.read() + 
+                                         modulation_to_filter_cutoff * modulation.read() +
+                                         expression_to_filter_cutoff * expression.read()));
+  filter_resonance_calculated = 2*bound1(filter_q + breath_to_filter_resonance * breath.read() +
+                                         modulation_to_filter_resonance * modulation.read() +
+                                         expression_to_filter_resonance * expression.read());
   AudioNoInterrupts();
   wave1.amplitude(wave1_gain);
   wave2.amplitude(wave2_gain);
@@ -530,12 +538,8 @@ void loop() {
   wave4.frequency(glide_frequency.read() * pitchbend_multiplier * wave4_detune_multiplier * wave_freq * default_tune);
   noise_pink.amplitude(breath.read());
   noise_white.amplitude(breath.read());              
-  filter_frequency.amplitude(bound1(filter_min_frequency + bound1(breath_to_filter_cutoff * breath.read() + 
-                                    modulation_to_filter_cutoff * modulation.read() +
-                                    expression_to_filter_cutoff * expression.read())), filter_frequency_ramp_rate);   
-  filter1.resonance(2*bound1(filter_q + breath_to_filter_resonance * breath.read() +
-                                      modulation_to_filter_resonance * modulation.read() +
-                                      expression_to_filter_resonance * expression.read()));
+  filter_frequency.amplitude(filter_frequency_calculated);   
+  filter1.resonance(filter_resonance_calculated);
   lfo1.frequency(lfo_max_freq * (lfo1_freq + bound1(breath_to_lfo1_freq * breath.read() + modulation_to_lfo1_freq * modulation.read() + expression_to_lfo1_freq * expression.read())));
   lfo1.amplitude(bound1(lfo1_gain + bound1(breath_to_lfo1_gain * breath.read() + modulation_to_lfo1_gain * modulation.read() + expression_to_lfo1_gain * expression.read())));
   wave1.frequencyModulation(lfo_max_range * bound1(lfo1_range + breath_to_lfo1_range * breath.read() + modulation_to_lfo1_range * modulation.read() + expression_to_lfo1_range * expression.read()));
@@ -562,21 +566,21 @@ void loop() {
   right.gain(2, wav_gain);
   sgtl5000_1.volume(master_volume);
   reverb.roomsize(reverb_size);
-  vca_bypass_mixer.gain(0, vca_gate_bypass);//Bypass
+  vca_bypass_mixer.gain(0, vca_gate_bypass);      //Bypass
   vca_bypass_mixer.gain(1, 1.0 - vca_gate_bypass);//Breath VCA
-  filter_bypass_mixer.gain(0, filter_bypass);//No Filter
+  filter_bypass_mixer.gain(0, filter_bypass);     //No Filter
   if(filter_type < 0.33) {
     filter_bypass_mixer.gain(1, 1.0);//Low Pass
-    filter_bypass_mixer.gain(2, 0);//Band Pass
-    filter_bypass_mixer.gain(3, 0);//High Pass
+    filter_bypass_mixer.gain(2, 0);  //Band Pass
+    filter_bypass_mixer.gain(3, 0);  //High Pass
   } else if(filter_type < 0.66) {
-    filter_bypass_mixer.gain(1, 0);//Low Pass
+    filter_bypass_mixer.gain(1, 0);  //Low Pass
     filter_bypass_mixer.gain(2, 1.0);//Band Pass
-    filter_bypass_mixer.gain(3, 0);//High Pass
+    filter_bypass_mixer.gain(3, 0);  //High Pass
   }  else {
-    filter_bypass_mixer.gain(1, 0);//Low Pass
-    filter_bypass_mixer.gain(2, 0);//Band Pass
-    filter_bypass_mixer.gain(3, 1);//High Pass
+    filter_bypass_mixer.gain(1, 0);  //Low Pass
+    filter_bypass_mixer.gain(2, 0);  //Band Pass
+    filter_bypass_mixer.gain(3, 1);  //High Pass
   }
   AudioInterrupts();
   if (usbMIDI.read()) {
