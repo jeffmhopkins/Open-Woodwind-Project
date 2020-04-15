@@ -595,3 +595,5 @@ float bound1(float val) {
   if(val < 0) return 0;
   return val;
 }
+
+#define FILLARRAY(a,n) a[0]=n, memcpy( ((char*)a)+sizeof(a[0]), a, sizeof(a)-sizeof(a[0]) );

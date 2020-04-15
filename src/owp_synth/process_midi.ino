@@ -13,8 +13,8 @@
  * The process for adding new CC modulations:
  *       -Add a define in patches.ino                                             EX: #define CC_EXPRESSION_TO_WAVE3_WAVE4_GAIN 112
  *       -Update patches.ino to add the CC to the END of the patch struct:        EX: float breath_to_wave3_wave4_gain, modulation_to_wave3_wave4_gain, expression_to_wave4_wave4_gain;
- *       -Update patches.ino to add the CC to savePatchSD():                      EX: breath_to_wave3_wave4_gain, modulation_to_wave3_wave4_gain, expression_to_wave4_wave4_gain};
- *       -Update patches.ino to add the CC to loadPatchSD():                      EX: expression_to_wave4_wave4_gain = patch.expression_to_wave4_wave4_gain;
+ *       -Update patches.ino to add the CC to createPatch():                      EX: breath_to_wave3_wave4_gain, modulation_to_wave3_wave4_gain, expression_to_wave4_wave4_gain};
+ *       -Update patches.ino to add the CC to initialize_patch():                 EX: expression_to_wave4_wave4_gain = patch.expression_to_wave4_wave4_gain;
  *       -Update patches.ino to add the CC to updateOSC():                        EX: sendcc(CC_EXPRESSION_TO_WAVE3_WAVE4_GAIN, expression_to_wave4_wave4_gain);
  *       -Update process_midi.ino to add the CC to procesMIDI():                  EX: case CC_EXPRESSION_TO_WAVE3_WAVE4_GAIN:expression_to_wave4_wave4_gain = data2f;break;
  *       -Update loop() to modify the value:                                      EX: wave3_wave4_gain_modulation_mixer.gain(2, expression_to_wave4_wave4_gain);

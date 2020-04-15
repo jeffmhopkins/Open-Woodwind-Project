@@ -6,7 +6,6 @@
  * Handles saving and loading the patch files from the SD card
  * 
  */
-
  
 #include <EEPROM.h>
 
@@ -138,7 +137,9 @@ struct Patch {
   float vca_gate_bypass, filter_bypass, filter_type; 
 };
 
-Patch eeprom_patch, patch, p;
+Patch eeprom_patch;       //This patch is loaded from eeprom
+Patch loadedPatches[127]; //These patches are loaded from SD card into this array
+bool  patchLoaded[127];   //Defines clean/dirty patch slots from what we've loaded from SD
 
 File  dataFile;
 
@@ -148,10 +149,12 @@ void configureSD() {
       Serial.println("Unable to access the SD card");
       loadPatchEEPROM();
   }
+  FILLARRAY(patchLoaded, false);
 }
 
 void savePatchSD(int i) {
-  p = createPatch();
+  loadedPatches[i] = createPatch();
+  patchLoaded[i] = true;
   if (SD.exists(String(String(i, DEC) +".PAT").c_str())) {
     SD.remove(String(String(i, DEC) +".PAT").c_str());
   }
@@ -163,22 +166,27 @@ void savePatchSD(int i) {
     Serial.print("size: ");
     Serial.print(sizeof(Patch));
     Serial.println();
-    dataFile.write((byte*)&p, sizeof(Patch));
-    Serial.write((byte*)&p, sizeof(Patch));
+    dataFile.write((byte*)&loadedPatches[i], sizeof(Patch));
+    Serial.write((byte*)&loadedPatches[i], sizeof(Patch));
     dataFile.close();
   }
 }
 
 void loadPatchSD(int i) {
-  dataFile = SD.open(String(String(i, DEC) +".PAT").c_str());
-  if(!dataFile) {
-    Serial.println("Could not load file");
-    wavplayer.play("err.wav");
+  if(patchLoaded[i]) {
+    initialize_patch(loadedPatches[i]);
   } else {
-    int bytes = dataFile.read(&patch, sizeof(Patch));
-    Serial.print("Loaded:");Serial.println(bytes, DEC);
-    dataFile.close();
-    initialize_patch(patch);
+    dataFile = SD.open(String(String(i, DEC) +".PAT").c_str());
+    if(!dataFile) {
+      Serial.println("Could not load file");
+      wavplayer.play("err.wav");
+    } else {
+      int bytes = dataFile.read(&loadedPatches[i], sizeof(Patch));
+      dataFile.close();
+      Serial.print("Loaded:");Serial.println(bytes, DEC);
+      patchLoaded[i] = true;
+      initialize_patch(loadedPatches[i]);
+    }
   }
 }
 
@@ -225,7 +233,7 @@ struct Patch createPatch() {
 }
 
 void initialize_patch(struct Patch patch) {
-  wave1.begin(patch.wave1_shape); 
+    wave1.begin(patch.wave1_shape); 
     wave2.begin(patch.wave2_shape);
     wave3.begin(patch.wave3_shape);
     wave4.begin(patch.wave4_shape);
