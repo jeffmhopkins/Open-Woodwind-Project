@@ -138,7 +138,7 @@ struct Patch {
 };
 
 Patch eeprom_patch;       //This patch is loaded from eeprom
-Patch loadedPatches[127]; //These patches are loaded from SD card into this array
+Patch loadedPatches[127]; //These patches are loaded from SD card into this array, this takes like 25% of the dynamic memory of the Teensy 4.0
 bool  patchLoaded[127];   //Defines clean/dirty patch slots from what we've loaded from SD
 
 File  dataFile;
@@ -149,7 +149,16 @@ void configureSD() {
       Serial.println("Unable to access the SD card");
       loadPatchEEPROM();
   }
-  FILLARRAY(patchLoaded, false);
+  for(int i=0;i < 127;i++) {
+    if(SD.exists(String(String(i, DEC) +".PAT").c_str())) {
+      dataFile = SD.open(String(String(i, DEC) +".PAT").c_str());
+      dataFile.read(&loadedPatches[i], sizeof(Patch));
+      dataFile.close();
+      patchLoaded[i] = true;
+    } else {
+      patchLoaded[i] = false;
+    }
+  }
 }
 
 void savePatchSD(int i) {
