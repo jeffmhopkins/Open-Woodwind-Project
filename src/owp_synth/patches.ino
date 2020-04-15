@@ -7,6 +7,9 @@
  * 
  */
 
+ 
+#include <EEPROM.h>
+
 #define CC_MODULATION_WHEEL               1
 #define CC_BREATH                         2
 #define CC_EXPRESSION                     11
@@ -102,7 +105,7 @@
 #define CC_VCA_GATE_BYPASS                114
 #define CC_FILTER_BYPASS                  115
 #define CC_FILTER_TYPE                    116
- 
+
 struct Patch {
   float wave1_shape, wave2_shape, wave3_shape, wave4_shape;
   float wave1_pulse_width, wave2_pulse_width, wave3_pulse_width, wave4_pulse_width;
@@ -132,9 +135,10 @@ struct Patch {
   float lfo_reset_phase_on_new_note;
   float breath_to_wave3_wave4_gain, modulation_to_wave3_wave4_gain, expression_to_wave4_wave4_gain;
   float wave3_wave4_gain_modulation_offset;
-  float vca_gate_bypass, filter_bypass, filter_type;
-  
+  float vca_gate_bypass, filter_bypass, filter_type; 
 };
+
+Patch eeprom_patch, patch, p;
 
 File  dataFile;
 
@@ -142,11 +146,53 @@ void configureSD() {
   SPI.setMOSI(11); SPI.setSCK(13);
   if (!(SD.begin(10))) {
       Serial.println("Unable to access the SD card");
+      loadPatchEEPROM();
   }
 }
 
 void savePatchSD(int i) {
-  Patch p =      {wave1_shape, wave2_shape, wave3_shape, wave4_shape,
+  p = createPatch();
+  if (SD.exists(String(String(i, DEC) +".PAT").c_str())) {
+    SD.remove(String(String(i, DEC) +".PAT").c_str());
+  }
+  dataFile = SD.open(String(String(i, DEC) +".PAT").c_str(), FILE_WRITE);
+  if(!dataFile) {
+    Serial.println("Could not create file");
+    wavplayer.play("err.wav");
+  } else {
+    Serial.print("size: ");
+    Serial.print(sizeof(Patch));
+    Serial.println();
+    dataFile.write((byte*)&p, sizeof(Patch));
+    Serial.write((byte*)&p, sizeof(Patch));
+    dataFile.close();
+  }
+}
+
+void loadPatchSD(int i) {
+  dataFile = SD.open(String(String(i, DEC) +".PAT").c_str());
+  if(!dataFile) {
+    Serial.println("Could not load file");
+    wavplayer.play("err.wav");
+  } else {
+    int bytes = dataFile.read(&patch, sizeof(Patch));
+    Serial.print("Loaded:");Serial.println(bytes, DEC);
+    dataFile.close();
+    initialize_patch(patch);
+  }
+}
+
+void savePatchEEPROM() {
+  EEPROM.put(0, createPatch());  
+}
+
+void loadPatchEEPROM() {
+  EEPROM.get(0, eeprom_patch);
+  initialize_patch(eeprom_patch);
+}
+
+struct Patch createPatch() {
+  Patch temp_patch = {wave1_shape, wave2_shape, wave3_shape, wave4_shape,
                   wave1_pulse_width, wave2_pulse_width, wave3_pulse_width, wave4_pulse_width,
                   wave1_detune_multiplier,wave2_detune_multiplier,wave3_detune_multiplier,wave4_detune_multiplier,
                   wave1_gain,  wave2_gain,  wave3_gain,  wave4_gain,
@@ -175,34 +221,11 @@ void savePatchSD(int i) {
                   breath_to_wave3_wave4_gain, modulation_to_wave3_wave4_gain, expression_to_wave4_wave4_gain,
                   wave3_wave4_gain_modulation_offset,
                   vca_gate_bypass,filter_bypass,filter_type};
-  if (SD.exists(String(String(i, DEC) +".PAT").c_str())) {
-    SD.remove(String(String(i, DEC) +".PAT").c_str());
-  }
-  dataFile = SD.open(String(String(i, DEC) +".PAT").c_str(), FILE_WRITE);
-  if(!dataFile) {
-    Serial.println("Could not create file");
-    wavplayer.play("err.wav");
-  } else {
-    Serial.print("size: ");
-    Serial.print(sizeof(Patch));
-    Serial.println();
-    dataFile.write((byte*)&p, sizeof(Patch));
-    Serial.write((byte*)&p, sizeof(Patch));
-    dataFile.close();
-  }
+  return temp_patch;
 }
 
-void loadPatchSD(int i) {
-  Patch patch;
-  dataFile = SD.open(String(String(i, DEC) +".PAT").c_str());
-  if(!dataFile) {
-    Serial.println("Could not load file");
-    wavplayer.play("err.wav");
-  } else {
-    int bytes = dataFile.read(&patch, sizeof(Patch));
-    Serial.print("Loaded:");Serial.println(bytes, DEC);
-    dataFile.close();
-    wave1.begin(patch.wave1_shape); 
+void initialize_patch(struct Patch patch) {
+  wave1.begin(patch.wave1_shape); 
     wave2.begin(patch.wave2_shape);
     wave3.begin(patch.wave3_shape);
     wave4.begin(patch.wave4_shape);
@@ -286,7 +309,6 @@ void loadPatchSD(int i) {
     filter_bypass = patch.filter_bypass;
     filter_type = patch.filter_type;
     updateOSC();
-  }
 }
 
 void updateOSC() {

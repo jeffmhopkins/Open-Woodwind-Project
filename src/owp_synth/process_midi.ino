@@ -143,6 +143,7 @@ void processMIDI(void) {
           break; 
         case CC_SAVE_PATCH: 
           savePatchSD(data2);
+          savePatchEEPROM();
           break;
         case CC_WAVE1_SHAPE: 
           if(data2 < 32) {

@@ -486,7 +486,7 @@ void setup() {
   pitchbend.amplitude(0.0);
   modulation.amplitude(0.0);
   
-  loadPatchSD(1);
+  loadPatchEEPROM(); //Loads the last saved patch.
   
   AudioInterrupts();
 }
