@@ -44,6 +44,10 @@ void processMIDI(void) {
   float data2f = data2/127.0;
 
   switch (type) {
+    case usbMIDI.ProgramChange:
+      loadPatchSD(data1+1);
+      break;
+      
     case usbMIDI.NoteOff: // 0x80
       if(note == data1) { //if this noteOff message matches are currently playing note
         breath.amplitude(0.0, breath_ramp_rate_note_off);
@@ -57,6 +61,7 @@ void processMIDI(void) {
         if((pitchbend_value < -8155) | (pitchbend_value > 8155)) {
           pitchbend.amplitude(0.0);
           glide_frequency.amplitude((pow(2.0, ((float)(24+data1+note_offset+tuning_value)/12.0))/wave_freq));
+            
         } else {
           glide_frequency.amplitude((pow(2.0, ((float)(24+data1+note_offset+tuning_value)/12.0))/wave_freq), portamento_min_multiplier * portamento_max + expression.read() * (portamento_max - portamento_min_multiplier * portamento_max) * expression_to_portamento);
         }
