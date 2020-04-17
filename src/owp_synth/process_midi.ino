@@ -49,27 +49,83 @@ void processMIDI(void) {
       break;
       
     case usbMIDI.NoteOff: // 0x80
-      if(note == data1) { //if this noteOff message matches are currently playing note
-        breath.amplitude(0.0, breath_ramp_rate_note_off);
-        noteon = false;
+      if(keyboard_mode) {
+        if((note==data1) && noteon) {
+          wave1.amplitude(0.0);
+          noteon = false;
+          note=-1;
+        } else if((note2==data1) && noteon2) {
+          wave2.amplitude(0.0);
+          noteon2 = false;
+          note2=-1;
+        } else if((note3==data1) && noteon3) {
+          wave3.amplitude(0.0);
+          noteon3 = false;
+          note3=-1;
+        } else if((note4==data1) && noteon4) {
+          wave4.amplitude(0.0);
+          noteon4 = false;
+          note4=-1;
+        }
+      } else {
+        if(note == data1) { //if this noteOff message matches are currently playing note
+          if(!keyboard_mode) {
+            breath.amplitude(0.0, breath_ramp_rate_note_off);
+          }
+          noteon = false;
+        }
       }
       break;
       
     case usbMIDI.NoteOn: // 0x90
-    AudioNoInterrupts();
-      if(noteon) {
-        if((pitchbend_value < -8155) | (pitchbend_value > 8155)) {
-          pitchbend.amplitude(0.0);
-          glide_frequency.amplitude((pow(2.0, ((float)(24+data1+note_offset+tuning_value)/12.0))/wave_freq));
-            
+      AudioNoInterrupts();
+      if(keyboard_mode) {
+        if(!noteon) {
+          current_keyboard_voice = 0;
+        } else if(!noteon2) {
+          current_keyboard_voice = 1;
+        } else if(!noteon3) {
+          current_keyboard_voice = 2;
+        } else if(!noteon4) {
+          current_keyboard_voice = 3;
         } else {
-          glide_frequency.amplitude((pow(2.0, ((float)(24+data1+note_offset+tuning_value)/12.0))/wave_freq), portamento_min_multiplier * portamento_max + expression.read() * (portamento_max - portamento_min_multiplier * portamento_max) * expression_to_portamento);
+          current_keyboard_voice = 4; //No more voices available, don't process
+        }
+        if(current_keyboard_voice==0) {
+          glide_frequency.amplitude((pow(2.0, ((float)(24+data1+note_offset+tuning_value)/12.0))/wave_freq));
+          velocity1 = lin_to_log(data2, 127, 3);
+          note = data1;
+          noteon = true;
+        } else if(current_keyboard_voice==1) {
+          glide_frequency2.amplitude((pow(2.0, ((float)(24+data1+note_offset+tuning_value)/12.0))/wave_freq));
+          velocity2 = lin_to_log(data2, 127, 3);
+          note2 = data1;
+          noteon2 = true;
+        } else if(current_keyboard_voice==2) {
+          glide_frequency3.amplitude((pow(2.0, ((float)(24+data1+note_offset+tuning_value)/12.0))/wave_freq));
+          velocity3 = lin_to_log(data2, 127, 3);
+          note3 = data1;
+          noteon3 = true;
+        } else if(current_keyboard_voice==3) {
+          glide_frequency4.amplitude((pow(2.0, ((float)(24+data1+note_offset+tuning_value)/12.0))/wave_freq));
+          velocity4 = lin_to_log(data2, 127, 3);
+          note4 = data1;
+          noteon4 = true;
         }
       } else {
-        glide_frequency.amplitude((pow(2.0, ((float)(24+data1+note_offset+tuning_value)/12.0))/wave_freq));
+        if(noteon) {
+          if((pitchbend_value < -8155) | (pitchbend_value > 8155)) {
+            pitchbend.amplitude(0.0);
+            glide_frequency.amplitude((pow(2.0, ((float)(24+data1+note_offset+tuning_value)/12.0))/wave_freq));
+          } else {
+            glide_frequency.amplitude((pow(2.0, ((float)(24+data1+note_offset+tuning_value)/12.0))/wave_freq), portamento_min_multiplier * portamento_max + expression.read() * (portamento_max - portamento_min_multiplier * portamento_max) * expression_to_portamento);
+          }
+        } else {
+          glide_frequency.amplitude((pow(2.0, ((float)(24+data1+note_offset+tuning_value)/12.0))/wave_freq));
+        }
+        note = data1;
+        noteon = true;
       }
-      note = data1;
-      noteon = true;
       if(lfo_reset_phase_on_new_note!=0.0) {//No phase change at 0 (can be set to 127 for start of sample)
         lfo1.phase(lfo_reset_phase_on_new_note*360);
         lfo2.phase(lfo_reset_phase_on_new_note*360);
@@ -82,8 +138,15 @@ void processMIDI(void) {
         case CC_MODULATION_WHEEL:
           modulation.amplitude(data2f, modulation_ramp_rate);sendcc(CC_MODULATION_WHEEL, data2*127.0);
           break;
+        case 7://volume on keyboard for keyboard mode
+          if(keyboard_mode) {
+            breath.amplitude(lin_to_log(data2, 127, breath_gamma)/127.0, breath_ramp_rate);sendcc(CC_BREATH, data2*127.0);
+          }
+          break;
         case CC_BREATH:
-          if(noteon) {breath.amplitude(lin_to_log(data2, 127, breath_gamma)/127.0, breath_ramp_rate);sendcc(CC_BREATH, data2*127.0);}
+          if(!keyboard_mode) {
+            if(noteon) {breath.amplitude(lin_to_log(data2, 127, breath_gamma)/127.0, breath_ramp_rate);sendcc(CC_BREATH, data2*127.0);}
+          }
           break;
         case CC_EXPRESSION:
           expression.amplitude(data2f, expression_ramp_rate);sendcc(CC_EXPRESSION, data2*127.0);
