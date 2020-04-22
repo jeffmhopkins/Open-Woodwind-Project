@@ -1,4 +1,4 @@
-Files for a box to hold the Teensy 4.0 + Audio Boad Rev D
+# Files for a box to hold the Teensy 4.0 + Audio Boad Rev D
 
 Notes:
 * The Teensy is meant to be soldered directly to the top of the audio board, using male pin headers. One of the capacitors on the Teensy comes VERY close to the SD card slot. Insulate the top of the SD card slot with kapton tape to avoid shorting.
