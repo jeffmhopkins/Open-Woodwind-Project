@@ -61,6 +61,8 @@
   #error "USB MIDI not enabled. Please set USB type to 'Serial + MIDI'."
 #endif
 
+#define DEBUG_TO_SERIAL true
+
 #include <Audio.h>
 #include <Wire.h>
 #include <SPI.h>
@@ -389,13 +391,17 @@ double  s_freq  = .5;
 short   chorus_delayline[CHORUS_DELAY_LENGTH];
 int     n_chorus = 4;
 
+unsigned long last_time = millis();
+
 void setup() {
   Serial.begin(115200);
   configureSD();
   sgtl5000_1.enable();
   sgtl5000_1.volume(master_volume);
-  AudioMemory(1500);
+  AudioMemory(400);
   sgtl5000_1.audioPostProcessorEnable();
+  sgtl5000_1.surroundSoundEnable();
+  sgtl5000_1.surroundSound(7, 3);
   AudioNoInterrupts();
   //notefreq1.begin(.15);
   wave3_wave4_gain_modulation_offset_dc.amplitude(wave3_wave4_gain_modulation_offset);
@@ -503,7 +509,8 @@ void setup() {
   expression.amplitude(0.0);
   pitchbend.amplitude(0.0);
   modulation.amplitude(0.0);
-  loadPatchEEPROM(); //Loads the last saved patch.
+  //loadPatchEEPROM(); //Loads the last saved patch.
+  loadPatchSD(1);
   AudioInterrupts();
 }
 
@@ -613,6 +620,20 @@ void loop() {
   AudioInterrupts();
   if (usbMIDI.read()) {
     processMIDI();
+  }
+  if(DEBUG_TO_SERIAL) {
+    if(millis() - last_time >= 5000) {
+      Serial.print("Proc = ");
+      Serial.print(AudioProcessorUsage());
+      Serial.print(" (");    
+      Serial.print(AudioProcessorUsageMax());
+      Serial.print("),  Mem = ");
+      Serial.print(AudioMemoryUsage());
+      Serial.print(" (");    
+      Serial.print(AudioMemoryUsageMax());
+      Serial.println(")");
+      last_time = millis();
+    } 
   }
 }
 
