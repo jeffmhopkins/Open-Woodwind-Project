@@ -104,6 +104,8 @@
 #define CC_VCA_GATE_BYPASS                114
 #define CC_FILTER_BYPASS                  115
 #define CC_FILTER_TYPE                    116
+#define CC_AUDIO_IN_PRE                   117
+#define CC_AUDIO_IN_POST                  118
 
 struct Patch {
   float wave1_shape, wave2_shape, wave3_shape, wave4_shape;
@@ -135,6 +137,7 @@ struct Patch {
   float breath_to_wave3_wave4_gain, modulation_to_wave3_wave4_gain, expression_to_wave4_wave4_gain;
   float wave3_wave4_gain_modulation_offset;
   float vca_gate_bypass, filter_bypass, filter_type; 
+  float audio_in_pre, audio_in_post;
 };
 
 Patch eeprom_patch;       //This patch is loaded from eeprom
@@ -237,7 +240,8 @@ struct Patch createPatch() {
                   lfo_reset_phase_on_new_note,
                   breath_to_wave3_wave4_gain, modulation_to_wave3_wave4_gain, expression_to_wave4_wave4_gain,
                   wave3_wave4_gain_modulation_offset,
-                  vca_gate_bypass,filter_bypass,filter_type};
+                  vca_gate_bypass,filter_bypass,filter_type,
+                  audio_in_pre, audio_in_post};
   return temp_patch;
 }
 
@@ -325,6 +329,8 @@ void initialize_patch(struct Patch patch) {
     vca_gate_bypass = patch.vca_gate_bypass;
     filter_bypass = patch.filter_bypass;
     filter_type = patch.filter_type;
+    audio_in_pre = patch.audio_in_pre;
+    audio_in_post = patch.audio_in_post;
     updateOSC();
 }
 
@@ -411,6 +417,8 @@ void updateOSC() {
   sendcc(CC_VCA_GATE_BYPASS, vca_gate_bypass);
   sendcc(CC_FILTER_BYPASS, filter_bypass);
   sendcc(CC_FILTER_TYPE, filter_type);
+  sendcc(CC_AUDIO_IN_PRE, audio_in_pre);
+  sendcc(CC_AUDIO_IN_POST, audio_in_post);
 }
 
 void sendcc(int cc, float value) {

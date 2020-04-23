@@ -51,6 +51,8 @@
  *   4. Add another Chorus effect that doesn't have the string quality? Modify number of voices and time block allowance
  *   
  *   5. Branch and merge OWP and OWP_Synth into OWP_Controller_Synth
+ *   
+ *   https://roboticsbackend.com/arduino-object-oriented-programming-oop/
  * 
  */
 #if !defined(ARDUINO_TEENSY40)
@@ -384,6 +386,8 @@ float expression_to_wave4_wave4_gain = 0.0;
 float vca_gate_bypass                = 0.0;
 float filter_bypass                  = 0.0;
 float filter_type                    = 0.0;
+float audio_in_pre                   = 1.0;
+float audio_in_post                  = 0.0;
 
 //Flange specific
 #define FLANGE_DELAY_LENGTH (6*AUDIO_BLOCK_SAMPLES)
@@ -471,11 +475,11 @@ void setup() {
   left.gain(0, 0.85);
   left.gain(1, 0.15);
   left.gain(2, 1);
-  left.gain(3, 1);//AudioInL
+  left.gain(3, audio_in_post);//AudioInL
   right.gain(0, 0.85);
   right.gain(1, 0.15);
   right.gain(2, 1);
-  right.gain(3, 1);//AudioInR
+  right.gain(3, audio_in_post);//AudioInR
   wave_noise_mixer.gain(0, 1);//waveforms
   wave_noise_mixer.gain(1, noise_pink_gain);//pink noise
   wave_noise_mixer.gain(2, noise_white_gain);//white noise
@@ -492,8 +496,8 @@ void setup() {
         waveshape6.shape((float *)driven_waveform3, 257);
   waveshape_mixer2.gain(0,1);//Dry
   waveshape_mixer2.gain(1,1);//Overdrive
-  waveshape_mixer2.gain(2,0);//AudioInL
-  waveshape_mixer2.gain(3,0);//AudioInR
+  waveshape_mixer2.gain(2,audio_in_pre);//AudioInL
+  waveshape_mixer2.gain(3,audio_in_pre);//AudioInR
   vca_bypass_mixer.gain(0,0);//Bypass
   vca_bypass_mixer.gain(1,1);//Breath VCA
   filter_bypass_mixer.gain(0,0);//No Filter
@@ -552,6 +556,7 @@ void loop() {
     wave3.amplitude(wave3_gain);
     wave4.amplitude(wave4_gain);
   }
+  
   wave3_wave4_gain_modulation_offset_dc.amplitude(wave3_wave4_gain_modulation_offset);
   wave3_wave4_gain_modulation_mixer.gain(0, breath_to_wave3_wave4_gain);    //Breath
   wave3_wave4_gain_modulation_mixer.gain(1, modulation_to_wave3_wave4_gain);//Modulation
@@ -604,6 +609,10 @@ void loop() {
   waveshape_mixer1.gain(2, bound1(waveshape3_gain*(overdrive_calculated*waveshape_modulation_multiplier + waveshape_modulation_multiplier_offset)));
   waveshape_mixer1.gain(3, bound1(waveshape4_gain*(overdrive_calculated*waveshape_modulation_multiplier + waveshape_modulation_multiplier_offset)));
   waveshape_mixer2.gain(0, waveshape_clean_gain);
+  waveshape_mixer2.gain(2,audio_in_pre);//AudioInL
+  waveshape_mixer2.gain(3,audio_in_pre);//AudioInR
+  left.gain(3, audio_in_post);//AudioInL
+  right.gain(3, audio_in_post);//AudioInR
   effect_mixer.gain(0, effects_oscillators);
   effect_mixer.gain(1, effects_flange);
   effect_mixer.gain(2, effects_chorus);

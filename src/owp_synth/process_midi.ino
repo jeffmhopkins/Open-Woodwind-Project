@@ -488,6 +488,12 @@ void processMIDI(void) {
         case CC_FILTER_TYPE:
           filter_type = data2f;
           break;
+        case CC_AUDIO_IN_PRE:
+          audio_in_pre = data2f;
+          break;
+        case CC_AUDIO_IN_POST:
+          audio_in_post = data2f;
+          break;
       }
       break;
 
