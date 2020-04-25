@@ -514,6 +514,9 @@ void processMIDI(void) {
           eq_5 = data2f*2.0 - 1.0;
           sgtl5000_1.eqBands(eq_1, eq_2, eq_3, eq_4, eq_5);
           break;
+        case CC_BREATH_GAMMA:
+          breath_gamma = data2f*3.0;
+          break;
       }
       break;
 

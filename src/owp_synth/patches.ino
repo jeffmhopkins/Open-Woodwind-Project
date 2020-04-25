@@ -106,11 +106,12 @@
 #define CC_FILTER_TYPE                    116
 #define CC_AUDIO_IN_PRE                   117
 #define CC_AUDIO_IN_POST                  118
-#define CC_EQ_1                           119
-#define CC_EQ_2                           120
-#define CC_EQ_3                           121
-#define CC_EQ_4                           122
-#define CC_EQ_5                           123
+#define CC_EQ_1                           12
+#define CC_EQ_2                           13
+#define CC_EQ_3                           14
+#define CC_EQ_4                           15
+#define CC_EQ_5                           16
+#define CC_BREATH_GAMMA                   17
 
 struct Patch {
   float wave1_shape, wave2_shape, wave3_shape, wave4_shape;
@@ -144,6 +145,7 @@ struct Patch {
   float vca_gate_bypass, filter_bypass, filter_type; 
   float audio_in_pre, audio_in_post;
   float eq_1, eq_2, eq_3, eq_4, eq_5;
+  float breath_gamma;
 };
 
 Patch eeprom_patch;       //This patch is loaded from eeprom
@@ -248,7 +250,8 @@ struct Patch createPatch() {
                   wave3_wave4_gain_modulation_offset,
                   vca_gate_bypass,filter_bypass,filter_type,
                   audio_in_pre, audio_in_post,
-                  eq_1, eq_2, eq_3, eq_4, eq_5};
+                  eq_1, eq_2, eq_3, eq_4, eq_5,
+                  breath_gamma};
   return temp_patch;
 }
 
@@ -344,6 +347,7 @@ void initialize_patch(struct Patch patch) {
     eq_4 = patch.eq_4;
     eq_5 = patch.eq_5;
     sgtl5000_1.eqBands(eq_1, eq_2, eq_3, eq_4, eq_5);
+    breath_gamma = patch.breath_gamma;
     updateOSC();
 }
 
@@ -437,6 +441,7 @@ void updateOSC() {
   sendcc(CC_EQ_3, eq_3);
   sendcc(CC_EQ_4, eq_4);
   sendcc(CC_EQ_5, eq_5);
+  sendcc(CC_BREATH_GAMMA, 3.0*breath_gamma);
 }
 
 void sendcc(int cc, float value) {
