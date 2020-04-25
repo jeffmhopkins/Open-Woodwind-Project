@@ -494,6 +494,26 @@ void processMIDI(void) {
         case CC_AUDIO_IN_POST:
           audio_in_post = data2f;
           break;
+        case CC_EQ_1:
+          eq_1 = data2f*2.0 - 1.0;
+          sgtl5000_1.eqBands(eq_1, eq_2, eq_3, eq_4, eq_5);
+          break;
+        case CC_EQ_2:
+          eq_2 = data2f*2.0 - 1.0;
+          sgtl5000_1.eqBands(eq_1, eq_2, eq_3, eq_4, eq_5);
+          break;
+        case CC_EQ_3:
+          eq_3 = data2f*2.0 - 1.0;
+          sgtl5000_1.eqBands(eq_1, eq_2, eq_3, eq_4, eq_5);
+          break;
+        case CC_EQ_4:
+          eq_4 = data2f*2.0 - 1.0;
+          sgtl5000_1.eqBands(eq_1, eq_2, eq_3, eq_4, eq_5);
+          break;
+        case CC_EQ_5:
+          eq_5 = data2f*2.0 - 1.0;
+          sgtl5000_1.eqBands(eq_1, eq_2, eq_3, eq_4, eq_5);
+          break;
       }
       break;
 

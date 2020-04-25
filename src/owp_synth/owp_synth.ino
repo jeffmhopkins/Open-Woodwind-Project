@@ -388,6 +388,11 @@ float filter_bypass                  = 0.0;
 float filter_type                    = 0.0;
 float audio_in_pre                   = 1.0;
 float audio_in_post                  = 0.0;
+float eq_1                           = 0.0;
+float eq_2                           = 0.0;
+float eq_3                           = 0.0;
+float eq_4                           = 0.0;
+float eq_5                           = 0.0;
 
 //Flange specific
 #define FLANGE_DELAY_LENGTH (6*AUDIO_BLOCK_SAMPLES)
@@ -411,8 +416,11 @@ void setup() {
   sgtl5000_1.volume(master_volume);
   AudioMemory(400);
   sgtl5000_1.audioPostProcessorEnable();
-  sgtl5000_1.surroundSoundEnable();
-  sgtl5000_1.surroundSound(7, 3);
+  //sgtl5000_1.surroundSoundEnable();
+  //sgtl5000_1.surroundSound(7, 3);
+  sgtl5000_1.adcHighPassFilterDisable();
+  sgtl5000_1.eqSelect(3);//5-band eq
+  sgtl5000_1.eqBands(eq_1, eq_2, eq_3, eq_4, eq_5);
   AudioNoInterrupts();
   //notefreq1.begin(.15);
   wave3_wave4_gain_modulation_offset_dc.amplitude(wave3_wave4_gain_modulation_offset);
@@ -637,6 +645,7 @@ void loop() {
     filter_bypass_mixer.gain(2, 0);  //Band Pass
     filter_bypass_mixer.gain(3, 1);  //High Pass
   }
+  
   AudioInterrupts();
   if (usbMIDI.read()) {
     processMIDI();
