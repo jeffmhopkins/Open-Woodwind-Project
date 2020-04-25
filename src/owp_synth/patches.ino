@@ -97,10 +97,10 @@
 #define CC_LFO2_DESTINATION_GAIN          107
 #define CC_LFO2_DESTINATION_FILTER        108
 #define CC_LFO_RESET_PHASE_ON_NEW_NOTE    109
-#define CC_BREATH_TO_WAVE3_WAVE4_GAIN     110
-#define CC_MODULATION_TO_WAVE3_WAVE4_GAIN 111
-#define CC_EXPRESSION_TO_WAVE3_WAVE4_GAIN 112
-#define CC_WAVE3_WAVE4_GAIN_MODULATION_OFFSET   113 
+#define CC_BREATH_TO_WAVE2_WAVE3_WAVE4_GAIN     110
+#define CC_MODULATION_TO_WAVE2_WAVE3_WAVE4_GAIN 111
+#define CC_EXPRESSION_TO_WAVE2_WAVE3_WAVE4_GAIN 112
+#define CC_WAVE2_WAVE3_WAVE4_GAIN_MODULATION_OFFSET   113 
 #define CC_VCA_GATE_BYPASS                114
 #define CC_FILTER_BYPASS                  115
 #define CC_FILTER_TYPE                    116
@@ -140,8 +140,8 @@ struct Patch {
   float lfo1_destination_frequency, lfo1_destination_gain, lfo1_destination_filter;
   float lfo2_destination_frequency, lfo2_destination_gain, lfo2_destination_filter;
   float lfo_reset_phase_on_new_note;
-  float breath_to_wave3_wave4_gain, modulation_to_wave3_wave4_gain, expression_to_wave4_wave4_gain;
-  float wave3_wave4_gain_modulation_offset;
+  float breath_to_wave2_wave3_wave4_gain, modulation_to_wave2_wave3_wave4_gain, expression_to_wave2_wave3_wave4_gain;
+  float wave2_wave3_wave4_gain_modulation_offset;
   float vca_gate_bypass, filter_bypass, filter_type; 
   float audio_in_pre, audio_in_post;
   float eq_1, eq_2, eq_3, eq_4, eq_5;
@@ -246,8 +246,8 @@ struct Patch createPatch() {
                   lfo1_destination_frequency, lfo1_destination_gain, lfo1_destination_filter,
                   lfo2_destination_frequency, lfo2_destination_gain, lfo1_destination_filter,
                   lfo_reset_phase_on_new_note,
-                  breath_to_wave3_wave4_gain, modulation_to_wave3_wave4_gain, expression_to_wave4_wave4_gain,
-                  wave3_wave4_gain_modulation_offset,
+                  breath_to_wave2_wave3_wave4_gain, modulation_to_wave2_wave3_wave4_gain, expression_to_wave2_wave3_wave4_gain,
+                  wave2_wave3_wave4_gain_modulation_offset,
                   vca_gate_bypass,filter_bypass,filter_type,
                   audio_in_pre, audio_in_post,
                   eq_1, eq_2, eq_3, eq_4, eq_5,
@@ -332,10 +332,10 @@ void initialize_patch(struct Patch patch) {
     lfo2_destination_gain = patch.lfo2_destination_gain;
     lfo1_destination_filter = patch.lfo1_destination_filter;
     lfo_reset_phase_on_new_note = patch.lfo_reset_phase_on_new_note;
-    breath_to_wave3_wave4_gain = patch.breath_to_wave3_wave4_gain;
-    modulation_to_wave3_wave4_gain = patch.modulation_to_wave3_wave4_gain;
-    expression_to_wave4_wave4_gain = patch.expression_to_wave4_wave4_gain;
-    wave3_wave4_gain_modulation_offset = patch.wave3_wave4_gain_modulation_offset;
+    breath_to_wave2_wave3_wave4_gain = patch.breath_to_wave2_wave3_wave4_gain;
+    modulation_to_wave2_wave3_wave4_gain = patch.modulation_to_wave2_wave3_wave4_gain;
+    expression_to_wave2_wave3_wave4_gain = patch.expression_to_wave2_wave3_wave4_gain;
+    wave2_wave3_wave4_gain_modulation_offset = patch.wave2_wave3_wave4_gain_modulation_offset;
     vca_gate_bypass = patch.vca_gate_bypass;
     filter_bypass = patch.filter_bypass;
     filter_type = patch.filter_type;
@@ -427,20 +427,20 @@ void updateOSC() {
   sendcc(CC_LFO2_DESTINATION_GAIN, lfo2_destination_gain);
   sendcc(CC_LFO2_DESTINATION_FILTER, lfo2_destination_filter);
   sendcc(CC_LFO_RESET_PHASE_ON_NEW_NOTE, lfo_reset_phase_on_new_note);
-  sendcc(CC_BREATH_TO_WAVE3_WAVE4_GAIN, breath_to_wave3_wave4_gain);
-  sendcc(CC_MODULATION_TO_WAVE3_WAVE4_GAIN, modulation_to_wave3_wave4_gain); 
-  sendcc(CC_EXPRESSION_TO_WAVE3_WAVE4_GAIN, expression_to_wave4_wave4_gain);
-  sendcc(CC_WAVE3_WAVE4_GAIN_MODULATION_OFFSET, wave3_wave4_gain_modulation_offset);
+  sendcc(CC_BREATH_TO_WAVE2_WAVE3_WAVE4_GAIN, breath_to_wave2_wave3_wave4_gain);
+  sendcc(CC_MODULATION_TO_WAVE2_WAVE3_WAVE4_GAIN, modulation_to_wave2_wave3_wave4_gain); 
+  sendcc(CC_EXPRESSION_TO_WAVE2_WAVE3_WAVE4_GAIN, expression_to_wave2_wave3_wave4_gain);
+  sendcc(CC_WAVE2_WAVE3_WAVE4_GAIN_MODULATION_OFFSET, wave2_wave3_wave4_gain_modulation_offset);
   sendcc(CC_VCA_GATE_BYPASS, vca_gate_bypass);
   sendcc(CC_FILTER_BYPASS, filter_bypass);
   sendcc(CC_FILTER_TYPE, filter_type);
   sendcc(CC_AUDIO_IN_PRE, audio_in_pre);
   sendcc(CC_AUDIO_IN_POST, audio_in_post);
-  sendcc(CC_EQ_1, eq_1);
-  sendcc(CC_EQ_2, eq_2);
-  sendcc(CC_EQ_3, eq_3);
-  sendcc(CC_EQ_4, eq_4);
-  sendcc(CC_EQ_5, eq_5);
+  sendcc(CC_EQ_1, (eq_1+1.0)/2.0);
+  sendcc(CC_EQ_2, (eq_2+1.0)/2.0);
+  sendcc(CC_EQ_3, (eq_3+1.0)/2.0);
+  sendcc(CC_EQ_4, (eq_4+1.0)/2.0);
+  sendcc(CC_EQ_5, (eq_5+1.0)/2.0);
   sendcc(CC_BREATH_GAMMA, 3.0*breath_gamma);
 }
 

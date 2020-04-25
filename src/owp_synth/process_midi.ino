@@ -467,17 +467,17 @@ void processMIDI(void) {
         case CC_LFO_RESET_PHASE_ON_NEW_NOTE:
           lfo_reset_phase_on_new_note = data2f;
           break;
-        case CC_BREATH_TO_WAVE3_WAVE4_GAIN:
-          breath_to_wave3_wave4_gain = data2f;
+        case CC_BREATH_TO_WAVE2_WAVE3_WAVE4_GAIN:
+          breath_to_wave2_wave3_wave4_gain = data2f;
           break;
-        case CC_MODULATION_TO_WAVE3_WAVE4_GAIN:
-          modulation_to_wave3_wave4_gain = data2f;
+        case CC_MODULATION_TO_WAVE2_WAVE3_WAVE4_GAIN:
+          modulation_to_wave2_wave3_wave4_gain = data2f;
           break;
-        case CC_EXPRESSION_TO_WAVE3_WAVE4_GAIN:
-          expression_to_wave4_wave4_gain = data2f;
+        case CC_EXPRESSION_TO_WAVE2_WAVE3_WAVE4_GAIN:
+          expression_to_wave2_wave3_wave4_gain = data2f;
           break;
-        case CC_WAVE3_WAVE4_GAIN_MODULATION_OFFSET:
-          wave3_wave4_gain_modulation_offset = data2f;
+        case CC_WAVE2_WAVE3_WAVE4_GAIN_MODULATION_OFFSET:
+          wave2_wave3_wave4_gain_modulation_offset = data2f;
           break;
         case CC_VCA_GATE_BYPASS:
           vca_gate_bypass = data2f;
