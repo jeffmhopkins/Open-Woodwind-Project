@@ -517,6 +517,9 @@ void processMIDI(void) {
         case CC_BREATH_GAMMA:
           breath_gamma = data2f*3.0;
           break;
+        case CC_REVERB_WET:
+          reverb_wet = data2f;
+          break;
       }
       break;
 

@@ -112,6 +112,7 @@
 #define CC_EQ_4                           15
 #define CC_EQ_5                           16
 #define CC_BREATH_GAMMA                   17
+#define CC_REVERB_WET                     18
 
 struct Patch {
   float wave1_shape, wave2_shape, wave3_shape, wave4_shape;
@@ -146,6 +147,7 @@ struct Patch {
   float audio_in_pre, audio_in_post;
   float eq_1, eq_2, eq_3, eq_4, eq_5;
   float breath_gamma;
+  float reverb_wet;
 };
 
 Patch eeprom_patch;       //This patch is loaded from eeprom
@@ -251,7 +253,8 @@ struct Patch createPatch() {
                   vca_gate_bypass,filter_bypass,filter_type,
                   audio_in_pre, audio_in_post,
                   eq_1, eq_2, eq_3, eq_4, eq_5,
-                  breath_gamma};
+                  breath_gamma,
+                  reverb_wet};
   return temp_patch;
 }
 
@@ -348,6 +351,7 @@ void initialize_patch(struct Patch patch) {
     eq_5 = patch.eq_5;
     sgtl5000_1.eqBands(eq_1, eq_2, eq_3, eq_4, eq_5);
     breath_gamma = patch.breath_gamma;
+    reverb_wet = patch.reverb_wet;
     updateOSC();
 }
 
@@ -442,6 +446,7 @@ void updateOSC() {
   sendcc(CC_EQ_4, (eq_4+1.0)/2.0);
   sendcc(CC_EQ_5, (eq_5+1.0)/2.0);
   sendcc(CC_BREATH_GAMMA, 3.0*breath_gamma);
+  sendcc(CC_REVERB_WET, reverb_wet);
 }
 
 void sendcc(int cc, float value) {

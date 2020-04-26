@@ -297,6 +297,7 @@ int   breath_ramp_rate_note_off  = 16;
 int   expression_ramp_rate       = 30; 
 int   modulation_ramp_rate       = 30;
 int   pitch_ramp_rate            = 10;
+float reverb_wet                 = 0.15;
 
 //Global Variables - Settings (You can change these to set startup conditions, though most will be overwritten when we load the patch from loadPatchSD(1) in setup()
 float lfo_reset_phase_on_new_note    = 1.0;
@@ -482,12 +483,12 @@ void setup() {
   waveselect.gain(3, wave4_gain);
   reverb.roomsize(reverb_size);
   reverb.damping(reverb_damping);
-  left.gain(0, 0.85);
-  left.gain(1, 0.15);
+  left.gain(0, 1.0 - reverb_wet);
+  left.gain(1, reverb_wet);
   left.gain(2, 1);
   left.gain(3, audio_in_post);//AudioInL
-  right.gain(0, 0.85);
-  right.gain(1, 0.15);
+  right.gain(0, 1.0 - reverb_wet);
+  right.gain(1, reverb_wet);
   right.gain(2, 1);
   right.gain(3, audio_in_post);//AudioInR
   wave_noise_mixer.gain(0, 1);//waveforms
@@ -629,6 +630,10 @@ void loop() {
   effect_mixer.gain(3, effects_delay);
   left.gain(2, wav_gain);
   right.gain(2, wav_gain);
+  left.gain(0, 1.0 - reverb_wet);
+  left.gain(1, reverb_wet);
+  right.gain(0, 1.0 - reverb_wet);
+  right.gain(1, reverb_wet);
   sgtl5000_1.volume(master_volume);
   reverb.roomsize(reverb_size);
   vca_bypass_mixer.gain(0, vca_gate_bypass);      //Bypass
