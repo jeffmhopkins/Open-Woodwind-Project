@@ -3,7 +3,7 @@
  * 
  * =============================================================================================================================================
  * 
- * Handles saving and loading the patch files from the SD card
+ * Handles saving and loading the patch files from the SD card and EEPROM, defines the CC numbers
  * 
  */
  
