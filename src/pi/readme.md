@@ -8,8 +8,8 @@
 # Configure iPad
 * Power on iPad, ensure you have TouchOSC and VNC installed
 * Connect to the ‘OpenSynth’ WiFi network, password is ‘OpenSynth’
-** The WiFi network defaults to DHCP, so IP address should automatically be assigned (in the 10.10.10.X range)
-** It might take a minute to actually connect and assign an IP address, so give it some time.
+* * The WiFi network defaults to DHCP, so IP address should automatically be assigned (in the 10.10.10.X range)
+* * It might take a minute to actually connect and assign an IP address, so give it some time.
 * Launch VNC and connect to ’10.10.10.10’ username ‘pi’ password ‘OpenSynth’
 # Configure Pi
 * The Pi uses Jack to control MIDI patching. Once a Patchbay is saved, it will automagically patch your devices as they are plugged in. The Jack control interface is auto launched at power up. 
