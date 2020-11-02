@@ -20,7 +20,7 @@
 # Test setup
 * At this point you should be able to play notes and have the MIDI stream into the Pocket Synth, this can be verified with headphones from the OpenSynth headphone output.
 # Configure TouchOSC
-* You must transfer the TouchOSC interface to the iPad. File can be found here: LINKY LINKY
+* You must transfer the TouchOSC interface to the iPad. File can be found here: https://github.com/jeffmhopkins/Open-Woodwind-Project/blob/master/src/osc_configuration_for_linux_touchosc/osc2midi.omm
 * In TouchOSC configure the interface to connect to send OSC messages to 10.10.10.10:3333 and listen on port 3334
 # At this point the TouchOSC interface on the iPad should be receiving OSC messages from the Pi. Breath, etc should be visibly changing with your controller values.
 * Play and have fun controlling the Synth from the TouchOSC interface
