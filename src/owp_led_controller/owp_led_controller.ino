@@ -93,7 +93,7 @@ void readInputs() {
 }
 
 void writeOutputs() {
-  analogWrite(pin_output_pwm1, (int()cv1_with_decay/4.0)); //output is 0-255, so divide by four
+  analogWrite(pin_output_pwm1, (int)(cv1_with_decay/4.0)); //output is 0-255, so divide by four
   analogWrite(pin_output_pwm2, (int)(cv2_with_decay/4.0));
   analogWrite(pin_output_pwm3, (int)(cv3_with_decay/4.0));
   analogWrite(pin_output_pwm4, (int)(cv4_with_decay/4.0));
