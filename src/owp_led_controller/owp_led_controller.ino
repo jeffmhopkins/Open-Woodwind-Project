@@ -17,7 +17,7 @@ int pin_output_pwm2 = 4;
 int pin_output_pwm3 = 6;
 int pin_output_pwm4 = 9;
 int pin_output_pwm5 = 10;
-int pin_output_pwm6 = 11;
+int pin_output_pwm6 = 11; 
 
 //Internal variables
 int   cv1_raw = 0;
