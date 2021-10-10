@@ -50,6 +50,19 @@ The Open Woodwind Project uses the following components:
 #define IMU_CC_POSITIVE false
 #define IMU_CC_NEGATIVE true
 
+#define CONTROLLER_MODE_MIDI    0
+#define CONTROLLER_MODE_MODULAR 1
+#define CONTROLLER_MODE_TRIGGER 2
+#define CONTROLLER_SET_CCW_OFF  3
+#define CONTROLLER_SET_CCW_EXPRESSION 4
+#define CONTROLLER_SET_MOD_WHEEL_OFF 5
+#define CONTROLLER_SET_MOD_WHEEL_ON  6
+
+#define CCW_MODE_OFF        0
+#define CCW_MODE_EXPRESSION 1
+
+int trigger_min_velocity = 10;
+
 int state = STATE_NOTE_OFF;
 
 int  note_temp              = 0;                    //Temporary variable used during legato fingering 
@@ -78,18 +91,18 @@ float deg_y_averaging = 0.5;                        //Smoothing from last loop's
 float deg_z           = 0.0;                        //The roll of the instrument
 float deg_z_averaging = 0.5;                        //Smoothing from last loop's poll
 
-float accel           = 0.0;		            //Accelerometer data
+float accel           = 0.0;		                    //Accelerometer data
 float accel_averaging = 0.5;                        //Smoothing from last loop's poll
-float accel_damping   = 1.5;		            //Accelerometer dampening
+float accel_damping   = 1.5;		                    //Accelerometer dampening
 
-float imu_deg_init   = 0.0;                         //Placeholder for when we gate our pb buttons, locking in the current instrument angle 
-float imu_up_limit   = -40;			    //The up angle for modulation
-float imu_down_limit = -60;			    //The down angle for modulation
+float imu_deg_init    = 0.0;                        //Placeholder for when we gate our pb buttons, locking in the current instrument angle 
+float imu_up_limit    = -40;		                    //The up angle for modulation
+float imu_down_limit  = -60;		                    //The down angle for modulation
 
-float imu_roll_deadband = 25;			    //How wide our roll dead band is
-float imu_roll_upper_limit = 30;	            //Upper roll limit
-float imu_roll_lower_limit = -30;		    //Lower roll limit
-boolean imu_roll_active    = false;		    //Is imu roll active
+float imu_roll_deadband    = 25;			              //How wide our roll dead band is
+float imu_roll_upper_limit = 30;	                  //Upper roll limit
+float imu_roll_lower_limit = -30;		                //Lower roll limit
+boolean imu_roll_active    = false;		              //Is imu roll active
 
 float imu_pb_deg_init   = 0.0;						
 float imu_pb_up_limit   = 15;
@@ -97,18 +110,30 @@ float imu_pb_down_limit = -15;
 float imu_pb_deadband   = 6.0;
 bool  imu_pb_active     = false;
 
-Adafruit_MPR121 touchA = Adafruit_MPR121();	     //Actual MPR121 object
+bool  settings_mode_fingered = false;
+int   controller_mode = CONTROLLER_MODE_MODULAR;
+int   controller_return_mode = 0;
+int   ccw_mode = CCW_MODE_OFF; //CCW_MODE_EXPRESSION
+bool  mod_wheel_enabled = false;
+
+Adafruit_MPR121 touchA = Adafruit_MPR121();	      //Actual MPR121 object
 Adafruit_MPR121 touchB = Adafruit_MPR121();			
 Adafruit_BNO055 bno = Adafruit_BNO055(55);	      //IMU	
-sensors_event_t event;				      //IMU event object
+sensors_event_t event;				                    //IMU event object
 
 bool A[] = {false,false,false,false,false,false,false,false,false,false,false,false}; // These are the arrays for finger positions
 bool B[] = {false,false,false,false,false,false,false,false,false,false,false,false};
 
-int CC[128]; 					      //CC array
-int pb = 0;					      //pb value
+bool A_last[] = {false,false,false,false,false,false,false,false,false,false,false,false}; // These are the arrays for finger positions
+bool B_last[] = {false,false,false,false,false,false,false,false,false,false,false,false};
 
-const int ledPin = 13;				      //LED for noteOn (onboard Teensy)
+long A_debounce[] = {0,0,0,0,0,0,0,0,0,0,0,0};
+long B_debounce[] = {0,0,0,0,0,0,0,0,0,0,0,0};
+
+int CC[128]; 					      //CC array
+int pb = 0;					        //pb value
+
+const int ledPin = 13;			//LED for noteOn (onboard Teensy)
 
 
 void setup() {
@@ -131,78 +156,163 @@ void setup() {
 void loop() {
   // Update our breath, fingered note, and CC messages
   updateSensors();
-      //  // Send CC messages if it is time
-      //if(millis() > cc_time + cc_delay) {
-        sendCC();
-      //  cc_time = millis();
-      //}
-  
-  
-  //STATE_NOTE_OFF
-  // - Exit to STATE_NOTE_NEW on breath over threshold
-  if(state == STATE_NOTE_OFF) {
-    if(breath_measured > breath_threshold) {
-      breath_time = millis();
-      state = STATE_NOTE_NEW;
+  if(cc_delay != 0) {
+    if(millis() > cc_time + cc_delay) {
+      sendCC();
+      cc_time = millis();
     }
+  } else {
+    sendCC();
   }
-  
-  //STATE_NOTE_NEW
-  // - Exit to STATE_NOTE_ON if we make it past the risetime
-  // - Exit to STATE_NOTE_OFF if we fall below breath_threshold
-  if(state == STATE_NOTE_NEW) {
-    if(breath_measured > breath_threshold) {
-      if(millis() > breath_time + breath_risetime) {
-        sendCC();
-        sendNoteOn(note_fingered);
-        cc_time = millis();
-        digitalWrite(ledPin, HIGH);
-        state = STATE_NOTE_ON;
-      }
-    } else {
-      state = STATE_NOTE_OFF;
-    }
-  }
-  
-  //STATE_NOTE_ON
-  // - Send noteOn/noteOff messages with note changes
-  // - Exit to STATE_NOTE_OFF if we fall below breath_threshold
-  if(state == STATE_NOTE_ON) {
-    if(breath_measured > breath_threshold) {
-      // Send CC messages if it is time
-      if(millis() > cc_time + cc_delay) {
-        sendCC();
-        cc_time = millis();
-      }
-      if(note_fingered != note_playing) {
-        if(legato) {
-          note_temp = note_playing;
-          if(imu_pb_active) {
-            imu_pb_deg_init = deg_y;
-            usbSendPitchBend(0, 1);
-          }
-          sendNoteOn(note_fingered);
-          sendNoteOff(note_temp);
-        } else {
-          sendNoteOff(note_playing);
-          sendNoteOn(note_fingered);
-        }
-      }
-    } else {
-      sendNoteOff(note_playing);
-      digitalWrite(ledPin, LOW);
-      state = STATE_NOTE_OFF;
-    }
-  }
+  if(controller_mode == CONTROLLER_SET_CCW_OFF)        {ccw_mode = CCW_MODE_OFF;        controller_mode = controller_return_mode;}
+  if(controller_mode == CONTROLLER_SET_CCW_EXPRESSION) {ccw_mode = CCW_MODE_EXPRESSION; controller_mode = controller_return_mode;}
+  if(controller_mode == CONTROLLER_SET_MOD_WHEEL_OFF)  {mod_wheel_enabled = true;       controller_mode = controller_return_mode;}
+  if(controller_mode == CONTROLLER_SET_MOD_WHEEL_OFF)  {mod_wheel_enabled = true;       controller_mode = controller_return_mode;}
+  if(controller_mode == CONTROLLER_MODE_MIDI)          {stateMachineControllerMidi();   }
+  if(controller_mode == CONTROLLER_MODE_MODULAR)       {stateMachineControllerModular();}
+  if(controller_mode == CONTROLLER_MODE_TRIGGER)       {stateMachineControllerTrigger();}
+  if(controller_mode == CONTROLLER_SET_MOD_WHEEL_OFF)
   
   while (usbMIDI.read()) {
     // ignore incoming messages
   }
 }
 
+void stateMachineControllerMidi() {
+    if(state == STATE_NOTE_OFF) {
+      if(breath_measured > breath_threshold) {
+        breath_time = millis();
+        state = STATE_NOTE_NEW;
+      }
+    }
+    if(state == STATE_NOTE_NEW) {
+      if(settings_mode_fingered) {
+        setSettings();
+      } else {
+         if(breath_measured > breath_threshold) {
+           if(millis() > breath_time + breath_risetime) {
+             sendCC();
+             sendNoteOn(note_fingered);
+             cc_time = millis();
+             digitalWrite(ledPin, HIGH);
+             state = STATE_NOTE_ON;
+          }
+        } else {
+          state = STATE_NOTE_OFF;
+        }
+      }
+    }
+    if((state == STATE_NOTE_ON) & (!settings_mode_fingered)) {
+      if(breath_measured > breath_threshold) {
+        // Send CC messages if it is time
+        if(millis() > cc_time + cc_delay) {
+          sendCC();
+          cc_time = millis();
+        }
+        if(note_fingered != note_playing) {
+          if(legato) {
+            note_temp = note_playing;
+            if(imu_pb_active) {
+              imu_pb_deg_init = deg_y;
+              usbSendPitchBend(0, 1);
+            }
+            sendNoteOn(note_fingered);
+            sendNoteOff(note_temp);
+          } else {
+            sendNoteOff(note_playing);
+            sendNoteOn(note_fingered);
+          }
+        }
+      } else {
+        if(!settings_mode_fingered) {
+          sendNoteOff(note_playing);
+          digitalWrite(ledPin, LOW);
+          state = STATE_NOTE_OFF;
+        }
+      }
+    }
+}
+
+void stateMachineControllerModular() {
+  if(settings_mode_fingered) {
+    updateBreath();
+    if(breath_measured > breath_threshold) {
+      setSettings();
+    } 
+  } else {
+    if(note_fingered != note_playing) {
+      if(legato) {
+        note_temp = note_playing;
+        if(imu_pb_active) {
+          imu_pb_deg_init = deg_y;
+          usbSendPitchBend(0, 1);
+        }
+        sendNoteOn(note_fingered);
+        sendNoteOff(note_temp);
+      } else {
+        sendNoteOff(note_playing);
+        sendNoteOn(note_fingered);
+      }
+    }
+  }
+}
+
+void stateMachineControllerTrigger() {
+  int b = map(breath_measured,SETTINGS_BREATH_THRESHOLD,1023,0,127);
+  float d= deg_y;
+  if(d < imu_down_limit) d = imu_down_limit;
+  if(d > imu_up_limit)   d = imu_up_limit;
+  int velocity = (int)mapf(d, imu_down_limit, imu_up_limit, trigger_min_velocity, 127);
+   
+  if(b>64) {
+    if(B[0] & !B[1] & B[2]) {
+      settings_mode_fingered = true;
+    } else {
+      settings_mode_fingered = false;
+    }
+    if(settings_mode_fingered) {
+      setSettings();
+    }
+  }
+  for (uint8_t i=0; i<12; i++) {
+    A_last[i] = A[i];
+    B_last[i] = B[i];
+    A[i] = touchA.filteredData(i) < SETTINGS_TOUCH_LEVEL;
+    B[i] = touchB.filteredData(i) < SETTINGS_TOUCH_LEVEL;
+  }
+  int trigger_offset = 0;
+  if( B[0] &!B[1])         trigger_offset -= 24;  // bottom left
+  if( B[0] & B[1])         trigger_offset -= 12;  // bottom left mid left bridged
+  if( B[1] & B[2])         trigger_offset += 12;  // mid left top left bridged
+  if(!B[1] & B[2])         trigger_offset += 24;  // top left
+  for(int i = 0; i < 12; i++) {
+    //bass drum on 36
+    if(A_last[i] != A[i]) A_debounce[i] = millis() + 10;
+    if((millis() > A_debounce[i]) && A_debounce[i] != 0) {
+       if(!A[i]) sendNoteOff(36 + i + trigger_offset);
+       if(A[i])  sendNoteOn(36 + i + trigger_offset, velocity);
+       A_debounce[i] = 0;
+    }
+  }
+  
+}
+
+void setSettings() {
+   if(A[0]) controller_mode = CONTROLLER_MODE_MIDI;    // A[0] = Left Hand Index
+   if(A[1]) controller_mode = CONTROLLER_MODE_MODULAR; // A[1] = Left Hand Middle
+   if(A[2]) controller_mode = CONTROLLER_MODE_TRIGGER; // A[2] = Left Hand Ring
+   if(A[3]) {controller_return_mode = controller_mode; controller_mode = CONTROLLER_SET_CCW_OFF;}
+   if(A[4]) {controller_return_mode = controller_mode; controller_mode = CONTROLLER_SET_CCW_EXPRESSION;}
+   if(A[5]) {controller_return_mode = controller_mode; controller_mode = CONTROLLER_SET_MOD_WHEEL_OFF;}
+   if(A[6]) {controller_return_mode = controller_mode; controller_mode = CONTROLLER_SET_MOD_WHEEL_ON;}
+         // A[5] = Right Hand Index
+         // A[6] = Right Hand Middle
+         // A[7] = Right Hand Ring
+}
+
 void updateSensors() {
   updateBreath();
-  updateNote();
+  if(controller_mode != CONTROLLER_MODE_TRIGGER) updateNote();
   updateCC();
 }
 
@@ -250,6 +360,13 @@ int parseNote() {
   for (uint8_t i=0; i<12; i++) {
     A[i] = touchA.filteredData(i) < SETTINGS_TOUCH_LEVEL;
     B[i] = touchB.filteredData(i) < SETTINGS_TOUCH_LEVEL;
+  }
+
+  //Check Settings mode
+  if(B[0] & !B[1] & B[2]) {
+    settings_mode_fingered = true;
+  } else {
+    settings_mode_fingered = false;
   }
 
   //Determine Register
@@ -317,14 +434,21 @@ void sendNoteOn(int note) {
   usbMIDI.sendNoteOn(note, 127, 1);
 }
 
+void sendNoteOn(int note, int velocity) {
+  note_playing = note;
+  usbMIDI.sendNoteOn(note, velocity, 1);
+}
+
 void sendNoteOff(int note) {
   usbMIDI.sendNoteOff(note, 0, 1);
 }
 
 void sendCC() {
-    sendCC_breath();
-    sendCC_pitchbend();
-    sendCC_modulation();
+    if(controller_mode != CONTROLLER_MODE_MODULAR) sendCC_breath();
+    if(controller_mode != CONTROLLER_MODE_TRIGGER) sendCC_pitchbend();
+    if(controller_mode != CONTROLLER_MODE_TRIGGER) {
+      if(mod_wheel_enabled) sendCC_modulation();
+    }
 }
 
 void sendCC_breath() {
@@ -364,13 +488,13 @@ void sendCC_pitchbend() {
     
      
      //CCW Expression
-     usbSendControlChange(11, mapf(u, imu_roll_deadband/2, imu_roll_upper_limit, 0, 127), 1);
+     if(ccw_mode == CCW_MODE_EXPRESSION) usbSendControlChange(11, mapf(u, imu_roll_deadband/2, imu_roll_upper_limit, 0, 127), 1);
      
   } else { 
     //still within the deadband, so ensure we are sending expression value of 0
     //CCW Expression
     
-    usbSendControlChange(11, 0, 1);
+    if(ccw_mode == CCW_MODE_EXPRESSION) usbSendControlChange(11, 0, 1);
   }
   
   //if we are outside the deadband, map it to pitchbend up/down. This allows for accel shakes inside the deadband to self center, but longer angle changes do full pitch bends.
