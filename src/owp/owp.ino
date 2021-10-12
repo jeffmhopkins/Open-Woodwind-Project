@@ -57,6 +57,8 @@ The Open Woodwind Project uses the following components:
 #define CONTROLLER_SET_CCW_EXPRESSION 4
 #define CONTROLLER_SET_MOD_WHEEL_OFF 5
 #define CONTROLLER_SET_MOD_WHEEL_ON  6
+#define CONTROLLER_SET_BREATH_ON 7
+#define CONTROLLER_SET_BREATH_OFF 8
 
 #define CCW_MODE_OFF        0
 #define CCW_MODE_EXPRESSION 1
@@ -111,10 +113,14 @@ float imu_pb_deadband   = 6.0;
 bool  imu_pb_active     = false;
 
 bool  settings_mode_fingered = false;
-int   controller_mode = CONTROLLER_MODE_MODULAR;
 int   controller_return_mode = 0;
+
+
+//THESE ARE THE DEFAULT SETTINGS
+int   controller_mode = CONTROLLER_MODE_MODULAR;
 int   ccw_mode = CCW_MODE_OFF; //CCW_MODE_EXPRESSION
-bool  mod_wheel_enabled = false;
+bool  mod_wheel_enabled = true;
+bool  breath_enabled = false; //when setting to midi mode this comes on automatically, and modular turns it off
 
 Adafruit_MPR121 touchA = Adafruit_MPR121();	      //Actual MPR121 object
 Adafruit_MPR121 touchB = Adafruit_MPR121();			
@@ -135,6 +141,8 @@ int pb = 0;					        //pb value
 
 const int ledPin = 13;			//LED for noteOn (onboard Teensy)
 
+float ambient_breath_reading = 0;
+
 
 void setup() {
   for(int i = 0; i < 128; i++) {
@@ -151,27 +159,42 @@ void setup() {
   delay(1000);
   bno.setExtCrystalUse(true);
   pinMode(ledPin, OUTPUT);
+
+  ambient_breath_reading = SETTINGS_BREATH_GAIN * analogRead(A0);
+  if(ambient_breath_reading > 1023) ambient_breath_reading = 1023;
 }
   
 void loop() {
   // Update our breath, fingered note, and CC messages
   updateSensors();
-  if(cc_delay != 0) {
+  if(cc_delay == 0) {
+    sendCC();
+  } else {
     if(millis() > cc_time + cc_delay) {
       sendCC();
       cc_time = millis();
     }
-  } else {
-    sendCC();
   }
+  //Check for settings beings changed
   if(controller_mode == CONTROLLER_SET_CCW_OFF)        {ccw_mode = CCW_MODE_OFF;        controller_mode = controller_return_mode;}
   if(controller_mode == CONTROLLER_SET_CCW_EXPRESSION) {ccw_mode = CCW_MODE_EXPRESSION; controller_mode = controller_return_mode;}
-  if(controller_mode == CONTROLLER_SET_MOD_WHEEL_OFF)  {mod_wheel_enabled = true;       controller_mode = controller_return_mode;}
-  if(controller_mode == CONTROLLER_SET_MOD_WHEEL_OFF)  {mod_wheel_enabled = true;       controller_mode = controller_return_mode;}
-  if(controller_mode == CONTROLLER_MODE_MIDI)          {stateMachineControllerMidi();   }
-  if(controller_mode == CONTROLLER_MODE_MODULAR)       {stateMachineControllerModular();}
-  if(controller_mode == CONTROLLER_MODE_TRIGGER)       {stateMachineControllerTrigger();}
-  if(controller_mode == CONTROLLER_SET_MOD_WHEEL_OFF)
+  if(controller_mode == CONTROLLER_SET_MOD_WHEEL_ON)   {mod_wheel_enabled = true;       controller_mode = controller_return_mode;}
+  if(controller_mode == CONTROLLER_SET_MOD_WHEEL_OFF)  {mod_wheel_enabled = false;      controller_mode = controller_return_mode;}
+  if(controller_mode == CONTROLLER_SET_BREATH_ON)      {breath_enabled    = true;       controller_mode = controller_return_mode;}
+  if(controller_mode == CONTROLLER_SET_BREATH_OFF)     {breath_enabled    = false;      controller_mode = controller_return_mode;}
+
+  //Change Controller Modes, or goto the current 
+  if(controller_mode == CONTROLLER_MODE_MIDI) {
+    if(controller_return_mode != CONTROLLER_MODE_MIDI) breath_enabled = true;  
+    stateMachineControllerMidi();   
+  }
+  if(controller_mode == CONTROLLER_MODE_MODULAR) {
+    if(controller_return_mode != CONTROLLER_MODE_MODULAR) breath_enabled = false; 
+    stateMachineControllerModular();
+  }
+  if(controller_mode == CONTROLLER_MODE_TRIGGER) {
+    stateMachineControllerTrigger();
+  }
   
   while (usbMIDI.read()) {
     // ignore incoming messages
@@ -204,11 +227,6 @@ void stateMachineControllerMidi() {
     }
     if((state == STATE_NOTE_ON) & (!settings_mode_fingered)) {
       if(breath_measured > breath_threshold) {
-        // Send CC messages if it is time
-        if(millis() > cc_time + cc_delay) {
-          sendCC();
-          cc_time = millis();
-        }
         if(note_fingered != note_playing) {
           if(legato) {
             note_temp = note_playing;
@@ -305,6 +323,9 @@ void setSettings() {
    if(A[4]) {controller_return_mode = controller_mode; controller_mode = CONTROLLER_SET_CCW_EXPRESSION;}
    if(A[5]) {controller_return_mode = controller_mode; controller_mode = CONTROLLER_SET_MOD_WHEEL_OFF;}
    if(A[6]) {controller_return_mode = controller_mode; controller_mode = CONTROLLER_SET_MOD_WHEEL_ON;}
+   if(A[7]) {controller_return_mode = controller_mode; controller_mode = CONTROLLER_SET_BREATH_OFF;}
+   if(A[8]) {controller_return_mode = controller_mode; controller_mode = CONTROLLER_SET_BREATH_ON;}
+   
          // A[5] = Right Hand Index
          // A[6] = Right Hand Middle
          // A[7] = Right Hand Ring
@@ -444,21 +465,30 @@ void sendNoteOff(int note) {
 }
 
 void sendCC() {
-    if(controller_mode != CONTROLLER_MODE_MODULAR) sendCC_breath();
-    if(controller_mode != CONTROLLER_MODE_TRIGGER) sendCC_pitchbend();
     if(controller_mode != CONTROLLER_MODE_TRIGGER) {
       if(mod_wheel_enabled) sendCC_modulation();
+      if(breath_enabled)    sendCC_breath();
+      sendCC_pitchbend();
     }
 }
 
 void sendCC_breath() {
-  int b = 0;
-  if(state == STATE_NOTE_ON) {
-    if(breath_measured < SETTINGS_BREATH_THRESHOLD) breath_measured = SETTINGS_BREATH_THRESHOLD;
-    b = map(breath_measured,SETTINGS_BREATH_THRESHOLD,1023,0,127);
+  if(CONTROLLER_MODE_MIDI) {
+    int b = 0;
+    if(state == STATE_NOTE_ON) {
+      if(breath_measured < SETTINGS_BREATH_THRESHOLD) breath_measured = SETTINGS_BREATH_THRESHOLD;
+      b = map(breath_measured,SETTINGS_BREATH_THRESHOLD,1023,0,127);
+    }
+    usbSendControlChange(2, b, 1); //Breath
+    breath_sent = b;
+  } else {
+    if((breath_measured - ambient_breath_reading) < 0) {
+      usbSendControlChange(2, 0, 1);
+    } else {
+      usbSendControlChange(2, map(breath_measured,ambient_breath_reading,1023,0,127), 1);
+    }
   }
-  usbSendControlChange(2, b, 1); //Breath
-  breath_sent = b;
+
 }
 
 void sendCC_pitchbend() {
